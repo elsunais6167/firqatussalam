@@ -7,6 +7,7 @@ class Mosque(models.Model):
     city = models.CharField(max_length=50)
     phone = models.CharField(max_length=11)
     address = models.CharField(max_length=300)
+    accepting_applications = models.BooleanField(default=True)
     date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
