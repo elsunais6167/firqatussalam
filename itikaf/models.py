@@ -2,16 +2,20 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
+class Lga(models.Model):
+    name = models.CharField(max_length=50)
+    def __str__(self):
+        return self.name
 class Mosque(models.Model):
     name = models.CharField(max_length=250)
-    city = models.CharField(max_length=50)
+    lga = models.ForeignKey(Lga, on_delete=models.CASCADE)
     phone = models.CharField(max_length=11)
     address = models.CharField(max_length=300)
     accepting_applications = models.BooleanField(default=True)
     date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.name} - {self.city}'
+        return f'{self.name} - {self.lga}'
 
 class MosqueAdmin(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
