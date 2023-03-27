@@ -42,7 +42,11 @@
 </head>
 <body>
     {% block content %}
-
+      {% if messages %}
+        {% for message in messages %}
+          {{ message }}
+        {% endfor %}
+      {% endif %}
     {% endblock%}
 
 <!-- Footer -->
@@ -53,8 +57,23 @@
         <script>
           document.write(new Date().getFullYear());
         </script>
-        , Developed & Managed by
-        <a href="https://mhinnov8.com.ng" target="_blank" class="footer-link fw-bolder">Mind Harvest Innovators</a>
+        , Powered By 
+        <a href="https://firqatussalam.org" target="_blank" class="footer-link fw-bolder">Firqatussalam</a>
+      </div>
+      <div>
+        <a
+          href="https://mhinnov8.com.ng"
+          target="_blank"
+          class="footer-link me-4"
+          >Developed by <strong>Mind Harvest Innovators</strong></a
+        >
+
+        <a
+          href="https://wa.me/+2347019575268"
+          target="_blank"
+          class="footer-link me-4"
+          >Call or Chat on <strong>07019575268</strong></a
+        >
       </div>
     </div>
   </footer>

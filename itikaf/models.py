@@ -2,19 +2,15 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
-class Lga(models.Model):
-    name = models.CharField(max_length=50)
-    def __str__(self):
-        return self.name
 class Mosque(models.Model):
     name = models.CharField(max_length=250)
-    lga = models.ForeignKey(Lga, on_delete=models.CASCADE)
+    lga = models.CharField(max_length=50)
     phone = models.CharField(max_length=11)
     address = models.CharField(max_length=300)
     accepting_applications = models.BooleanField(default=True)
     date_created = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
+    def __int__(self):
         return f'{self.name} - {self.lga}'
 
 class MosqueAdmin(models.Model):
@@ -32,8 +28,9 @@ class Applicant(models.Model):
     next_of_kin_name = models.CharField(max_length=100)
     next_of_kin_phone = models.CharField(max_length=20)
     medical_condition = models.TextField(blank=True)
-    start_date = models.DateField()
-    end_date = models.DateField()
+    start_date = models.CharField(max_length=20)
+    end_date = models.CharField(max_length=20)
+    id_type = models.CharField(max_length=50)
     id_card_no = models.CharField(max_length=20)
     id_image = models.ImageField()
     photo = models.ImageField()
