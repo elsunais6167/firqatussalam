@@ -80,7 +80,7 @@ def application(request):
         )
         details.save()
         request.session['applicant_id'] = details.id
-        return redirect('applicant_info')
+        return redirect('printout')
     
     return render(request, 'home.html')
 
@@ -113,7 +113,17 @@ def profile(request):
     return render(request, 'md_profile.html', context)
 
 def printout(request):
-    context = {
+    applicant_id = request.session.get('applicant_id')
+    if not applicant_id:
+        messages.error(request, 'No applicant ID found.')
+        return redirect('home')
 
+    try:
+        applicant_info = Applicant.objects.get(id=applicant_id)
+    except Applicant.DoesNotExist:
+        messages.error(request, 'Applicant not found.')
+        return redirect('home')
+    context = {
+        'applicant_info': applicant_info
     }
     return render(request, 'printout.html', context)
