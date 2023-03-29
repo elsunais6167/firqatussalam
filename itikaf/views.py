@@ -5,14 +5,11 @@ from django.contrib import messages
 
 import re
 
-date_string = '2022-03-28T18:00:00'
 # Create your views here.
 
 def home(request):
-    #cities = Lga.objects.all()
     mosques = Mosque.objects.all()
     context = {
-        #'cities': cities,
         'mosques': mosques
         }
     return render(request, 'home.html', context)
@@ -82,21 +79,41 @@ def application(request):
             
         )
         details.save()
-        return HttpResponse('Congratulations. You have successfully applied')
+        request.session['applicant_id'] = details.id
+        return redirect('applicant_info')
+    
     return render(request, 'home.html')
 
-def dashboard(request):
+def mosque_dashboard(request):
+    list_applicants = Applicant.objects.all()
+    context = {
+        'list_applicants': list_applicants
+    }
+    return render(request, 'mosque_dashboard.html', context)
+
+def applicant_info(request, pk):
+    applicant_info = Applicant.objects.get(id=pk)
+    #mosque_name = Mosque.objects.get(id=pk)
+    context = {
+        'applicant_info': applicant_info,
+        #'mosque_name': mosque_name,
+    }
+    return render(request, 'applicant_info.html', context)
+
+def new_applicant(request):
+    context = {
+        
+        }
+    return render(request, 'md_apply.html', context)
+
+def profile(request):
     context = {
 
     }
+    return render(request, 'md_profile.html', context)
 
-    return render(request, 'applicant.html', context)
-
-def list_applicants(request):
-
-    mosques = Mosque.objects.all()
+def printout(request):
     context = {
-        #'cities': cities,
-        'mosques': mosques
-        }
-    return render(request, 'home.html', context)
+
+    }
+    return render(request, 'printout.html', context)

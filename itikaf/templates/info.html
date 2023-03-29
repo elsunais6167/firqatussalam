@@ -1,0 +1,89 @@
+
+<div class="card mb-4">
+    <h5 class="card-header">I'tikaf ID Number is {{ applicant_info.id }}</h5>
+    <!-- Account -->
+        {% if applicant_info.photo %}
+        <div class="card-body">
+            <div class="d-flex align-items-start align-items-sm-center gap-4">
+                <img src="{{ applicant_info.photo.url }}" alt="passport" class="d-block rounded" height="100" width="100"
+                    id="passports" />
+                
+            </div>
+        {% endif %}
+        </div>
+        <hr class="my-0" />
+        <div class="card-body">
+
+
+            <input class="form-control" type="hidden" readonly id="mos" name="mos" value="{{ masjid_id }}" />
+
+            <div class="row">
+
+                <div class="mb-3 col-md-6">
+                    <label for="AName" class="form-label">Name</label>
+                    <input class="form-control" value="{{ applicant_info.name }}" type="text" id="AName" name="AName" required readonly/>
+                </div>
+                <div class="mb-3 col-md-6">
+                    <label for="age" class="form-label">Age</label>
+                    <input class="form-control" type="number" name="age" value="{{ applicant_info.age }}" id="age" maxlength="2" required readonly/>
+                </div>
+                <div class="mb-3 col-md-6">
+                    <label for="address" class="form-label">Address</label>
+                    <input class="form-control" type="text" id="address" value="{{ applicant_info.address }}" name="address" required readonly/>
+                </div>
+                <div class="mb-3 col-md-6">
+                    <label class="form-label" for="phoneNumber">Phone Number</label>
+                    <div class="input-group input-group-merge">
+                        <span class="input-group-text">NG (+234)</span>
+                        <input type="number" id="phoneNumber" name="phoneNumber" class="form-control"
+                            placeholder="07019575268" value="{{ applicant_info.phone}}" required readonly/>
+                    </div>
+                </div>
+                <div class="mb-3 col-md-6">
+                    <label for="NName" class="form-label">Next of Kin</label>
+                    <input type="text" class="form-control" id="NName"
+                    value="{{ applicant_info.next_of_kin_name }}" name="NName" required readonly/>
+                </div>
+                <div class="mb-3 col-md-6">
+                    <label class="form-label" for="NphoneNumber">Next of Kin Phone Number</label>
+                    <div class="input-group input-group-merge">
+                        <span class="input-group-text">NG (+234)</span>
+                        <input type="number" id="NphoneNumber" name="NphoneNumber" class="form-control"
+                            placeholder="07019575268" value="{{ applicant_info.next_of_kin_phone}}" required readonly/>
+                    </div>
+                </div>
+                <div class="mb-3 col-md-6">
+                    <label for="SDate" class="form-label">Starting Date</label>
+                    <input type="date" class="form-control" 
+                    value="{{ applicant_info.start_date }}" id="SDate" name="SDate" required readonly/>
+                </div>
+                <div class="mb-3 col-md-6">
+                    <label for="EDate" class="form-label">Ending Date</label>
+                    <input type="date" class="form-control" 
+                    value="{{ applicant_info.end_date }}" id="EDate" name="EDate" required readonly/>
+                </div>
+
+                <div class="mb-3 col-md-6">
+                    <label for="IdType" class="form-label">Type of ID</label>
+                    <input type="text" class="form-control" 
+                    value="{{ applicant_info.id_type }}" id="IdType" name="IdType" required readonly/>
+                </div>
+                <div class="mb-3 col-md-6">
+                    <label for="IdNum" class="form-label">ID Card Number</label>
+                    <input type="text" class="form-control" 
+                    value="{{ applicant_info.id_card_no }}" id="IdNum" name="IdNum" required readonly/>
+                </div>
+                <div class="mb-6 col-md-12">
+                    <label for="mdcc" class="form-label">Medical Condition</label>
+                    <textarea class="form-control" id="mdcc" rows="3" name="mdcc" readonly>{{ applicant_info.medical_condition }}</textarea>
+                </div>
+            </div>
+            {% if applicant_info.id_image %}
+            <div class="card-body">
+                <div class="d-flex align-items-start align-items-sm-center gap-4">
+                    <img src="{{ applicant_info.id_image.url }}" alt="id-card" class="img-fluid" height="200"
+                        width="500" id="id-cards" />
+                </div>
+            {% endif %}
+      </div>
+</div>

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Content wrapper -->
+<div class="content-wrapper">
+    <!-- Content -->
+
+    {% include 'data.html' %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <ul class="nav nav-pills flex-column flex-md-row mb-3">
+                <li class="nav-item">
+                    <a class="nav-link active" href="javascript:void(0);"><i class="bx bxl-telegram me-1"></i>
+                        Approval</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'new_applicant' %}"><i class='bx bx-add-to-queue'></i> Add New
+                        Applicant</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'profile' %}"><i class="bx bx-cog me-1"></i> Settings </a>
+                </li>
+            </ul>
+
+            <div class="card mb-4">
+                <h5 class="card-header">List of Applicants</h5>
+                <div class="table-responsive text-nowrap">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Address</th>
+                                <th>Phone</th>
+                                <th>Next of Kin</th>
+                                <th>N.O.K Contact</th>
+                                <th>Med. Condition</th>
+                                <th>View Details</th>
+
+                            </tr>
+                        </thead>
+                        <tbody class="table-border-bottom-0">
+                            {% for l in list_applicants %}
+                            <tr>
+
+                                <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{l.name}}</strong>
+                                </td>
+                                <td>{{l.address}}</td>
+                                <td>{{l.phone}}</td>
+                                <td>{{l.next_of_kin_name}}</td>
+                                <td>{{l.next_of_kin_phone}}</td>
+                                <td>{{l.medical_condition}}</td>
+                                <td>
+                                    <a href="{% url 'applicant_info' l.id %}" class="btn btn-primary me-2">View</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!-- / Content -->
+{% endblock content%}

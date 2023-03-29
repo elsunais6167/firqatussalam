@@ -7,80 +7,82 @@
     <!-- Content -->
 
     <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Joint I'tikaf Committee /</span> Application Form</h4>
+        <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Joint I'tikaf Committee /</span> Application
+            Form</h4>
 
         <div class="row">
             <div class="col-md-12">
-                
+
                 <div class="card mb-4">
                     <h5 class="card-header"> {{ title }} </h5>
                     <!-- Account -->
                     <form method="POST" action="{% url 'form' %}" enctype="multipart/form-data">
                         {% csrf_token %}
-                    <div class="card-body">
-                        <div class="d-flex align-items-start align-items-sm-center gap-4">
-                            <img src="#" alt="passport" class="d-block rounded"
-                                height="100" width="100" id="passports" />
-                            <div class="button-wrapper">
-                                <label for="passport" class="btn btn-primary me-2 mb-4" tabindex="0">
-                                    <span class="d-none d-sm-block">Upload Passport</span>
-                                    <i class="bx bx-upload d-block d-sm-none"></i>
-                                    <input type="file" id="passport" class="account-file-input" hidden
-                                        accept="image/png, image/jpeg" name="passport" required/>
-                                </label>
-                                <p class="text-muted mb-0">Allowed JPG, GIF or PNG. Max size of 800K</p>
+                        <div class="card-body">
+                            <div class="d-flex align-items-start align-items-sm-center gap-4">
+                                <img src="#" alt="passport" class="d-block rounded" height="100" width="100"
+                                    id="passports" />
+                                <div class="button-wrapper">
+                                    <label for="passport" class="btn btn-primary me-2 mb-4" tabindex="0">
+                                        <span class="d-none d-sm-block">Upload Passport</span>
+                                        <i class="bx bx-upload d-block d-sm-none"></i>
+                                        <input type="file" id="passport" class="account-file-input" hidden
+                                            accept="image/png, image/jpeg" name="passport" required />
+                                    </label>
+                                    <p class="text-muted mb-0">Allowed JPG, GIF or PNG. Max size of 800K</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <hr class="my-0" />
-                    <div class="card-body">
-                        
-                            
+                        <hr class="my-0" />
+                        <div class="card-body">
+
+
                             <input class="form-control" type="hidden" id="mos" name="mos" value="{{ masjid_id }}" />
-                            
+
                             <div class="row">
 
                                 <div class="mb-3 col-md-6">
                                     <label for="AName" class="form-label">Name</label>
-                                    <input class="form-control" type="text" id="AName" name="AName" required/>
+                                    <input class="form-control" type="text" id="AName" name="AName" required />
                                 </div>
                                 <div class="mb-3 col-md-6">
                                     <label for="age" class="form-label">Age</label>
-                                    <input class="form-control" type="number" name="age" id="age" maxlength="2" required/>
+                                    <input class="form-control" type="number" name="age" id="age" maxlength="2"
+                                        required />
                                 </div>
                                 <div class="mb-3 col-md-6">
                                     <label for="address" class="form-label">Address</label>
-                                    <input class="form-control" type="text" id="address" name="address" required/>
+                                    <input class="form-control" type="text" id="address" name="address" required />
                                 </div>
                                 <div class="mb-3 col-md-6">
                                     <label class="form-label" for="phoneNumber">Phone Number</label>
                                     <div class="input-group input-group-merge">
                                         <span class="input-group-text">NG (+234)</span>
                                         <input type="number" id="phoneNumber" name="phoneNumber" class="form-control"
-                                            placeholder="07019575268" required/>
+                                            placeholder="07019575268" required />
                                     </div>
                                 </div>
                                 <div class="mb-3 col-md-6">
                                     <label for="NName" class="form-label">Next of Kin</label>
-                                    <input type="text" class="form-control" id="NName" name="NName" required/>
+                                    <input type="text" class="form-control" id="NName" name="NName" required />
                                 </div>
                                 <div class="mb-3 col-md-6">
                                     <label class="form-label" for="NphoneNumber">Next of Kin Phone Number</label>
                                     <div class="input-group input-group-merge">
                                         <span class="input-group-text">NG (+234)</span>
                                         <input type="number" id="NphoneNumber" name="NphoneNumber" class="form-control"
-                                            placeholder="07019575268" required/>
+                                            placeholder="07019575268" required />
                                     </div>
                                 </div>
                                 <div class="mb-3 col-md-6">
                                     <label for="SDate" class="form-label">Starting Date</label>
-                                    <input type="date" class="form-control" id="SDate" name="SDate" required/>
+                                    <input type="date" class="form-control" id="SDate" name="SDate" required />
                                 </div>
                                 <div class="mb-3 col-md-6">
                                     <label for="EDate" class="form-label">Ending Date</label>
-                                    <input type="date" class="form-control" id="EDate" name="EDate" required/>
+                                    <input type="date" class="form-control" id="EDate" name="EDate" required />
                                 </div>
-                                
+
                                 <div class="mb-3 col-md-6">
                                     <label for="IdType" class="form-label">Type of ID</label>
                                     <select id="IdType" name="IdType" class="select3 form-select" required>
@@ -92,7 +94,7 @@
                                 </div>
                                 <div class="mb-3 col-md-6">
                                     <label for="IdNum" class="form-label">ID Card Number</label>
-                                    <input type="text" class="form-control" id="IdNum" name="IdNum" required/>
+                                    <input type="text" class="form-control" id="IdNum" name="IdNum" required />
                                 </div>
                                 <div class="mb-6 col-md-12">
                                     <label for="mdcc" class="form-label">Medical Condition</label>
@@ -101,25 +103,29 @@
                             </div>
                             <div class="card-body">
                                 <div class="d-flex align-items-start align-items-sm-center gap-4">
-                                    <img src="../assets/img/avatars/1.png" alt="id-card" class="img-fluid"
-                                        height="200" width="500" id="id-cards" />
+                                    <img src="../assets/img/avatars/1.png" alt="id-card" class="img-fluid" height="200"
+                                        width="500" id="id-cards" />
                                     <div class="button-wrapper">
                                         <label for="id-card" class="btn btn-primary me-2 mb-4" tabindex="1">
                                             <span class="d-none d-sm-block">Upload ID Card</span>
                                             <i class="bx bx-upload d-block d-sm-none"></i>
                                             <input type="file" id="id-card" class="account-file-input" hidden
-                                                accept="image/png, image/jpeg" name="id-card" required/>
+                                                accept="image/png, image/jpeg" name="id-card" required />
                                         </label>
                                         <p class="text-muted mb-0">Allowed JPG, GIF or PNG. Max size of 800K</p>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="mt-2">
                                 <button type="submit" class="btn btn-primary me-2">Apply</button>
                             </div>
-                        </form>
-                    </div>
-                    <!-- /Account -->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Account -->
 
-                    {% endblock content %}
+{% endblock content %}
