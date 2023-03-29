@@ -19,16 +19,19 @@ def home(request):
 
 
 def apply(request, pk):
+    title = Mosque.objects.get(id=pk)
     masjids_id = Mosque.objects.get(id=pk)
     masjids_id = str(masjids_id)
     masjid_id = re.sub('[^0-9]', '', masjids_id)
     masjid_id = int(masjid_id)
     context = {
         'masjid_id': masjid_id,
+        'title': title
     }
     return render(request, 'apply.html', context)
 
 def application(request):
+    photo = request.FILES.get('passport')
     mosque_id = request.POST.get('mos')
     name = request.POST.get('AName')
     age = request.POST.get('age')
@@ -42,8 +45,10 @@ def application(request):
     request.method = 'POST'
     id_type = request.POST['IdType']
     id_card_no = request.POST.get('IdNum')
-
+    id_image = request.FILES.get('id-card')
+    
     if request.method =='POST':
+        photo = photo
         mosque_id = mosque_id
         name = name
         age = age
@@ -56,10 +61,11 @@ def application(request):
         end_date = end_date
         id_type = id_type
         id_card_no = id_card_no
-        #id_image = request.GET.get('id-card')
-        #photo = request.Get.get('passport')
+        id_image = id_image
+        
 
         details = Applicant(
+            photo = photo,
             mosque_id = mosque_id,
             name = name,
             age = age,
@@ -72,9 +78,8 @@ def application(request):
             end_date = end_date,
             id_type = id_type,
             id_card_no = id_card_no,
-            #id_image = id_image,
-            #photo = photo,
-
+            id_image = id_image,
+            
         )
         details.save()
         return HttpResponse('Congratulations. You have successfully applied')
@@ -86,3 +91,12 @@ def dashboard(request):
     }
 
     return render(request, 'applicant.html', context)
+
+def list_applicants(request):
+
+    mosques = Mosque.objects.all()
+    context = {
+        #'cities': cities,
+        'mosques': mosques
+        }
+    return render(request, 'home.html', context)

@@ -10,7 +10,7 @@ class Mosque(models.Model):
     accepting_applications = models.BooleanField(default=True)
     date_created = models.DateTimeField(auto_now_add=True)
 
-    def __int__(self):
+    def __str__(self):
         return f'{self.name} - {self.lga}'
 
 class MosqueAdmin(models.Model):
@@ -32,8 +32,8 @@ class Applicant(models.Model):
     end_date = models.CharField(max_length=20)
     id_type = models.CharField(max_length=50)
     id_card_no = models.CharField(max_length=20)
-    id_image = models.ImageField()
-    photo = models.ImageField()
+    id_image = models.ImageField(null=True, blank=True, upload_to="id_images/")
+    photo = models.ImageField(null=True, blank=True, upload_to="profile_images/")
     added_by = models.ForeignKey(MosqueAdmin, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
