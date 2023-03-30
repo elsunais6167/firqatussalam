@@ -1,8 +1,14 @@
 from django.shortcuts import render, redirect
-from .models import Mosque, Applicant, Approval, CheckIn, CheckOut, Comment
-from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
+
+from .models import Mosque, Applicant, Approval, CheckIn, CheckOut, Comment, MosqueAdmin
+from .forms import CreateUserForm
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+
 import re
 
 # Create your views here.
@@ -84,13 +90,22 @@ def application(request):
     
     return render(request, 'home.html')
 
+@login_required
 def mosque_dashboard(request):
-    list_applicants = Applicant.objects.all()
+    mosque_admin = get_object_or_404(MosqueAdmin, user=request.user)
+    mosque = mosque_admin.mosque
+
+    list_applicants = Applicant.objects.filter(mosque=mosque)
+    total_applicants = list_applicants.count()
+
     context = {
-        'list_applicants': list_applicants
+        'list_applicants': list_applicants,
+        'mosque':mosque,
+        'total_applicants': total_applicants,
     }
     return render(request, 'mosque_dashboard.html', context)
 
+@login_required
 def applicant_info(request, pk):
     applicant_info = Applicant.objects.get(id=pk)
     applicants_id = Applicant.objects.get(id=pk)
@@ -129,6 +144,7 @@ def applicant_info(request, pk):
     }
     return render(request, 'applicant_info.html', context)
 
+@login_required
 def comment(request, pk):
     comment = request.POST.get('comment')
     participant = get_object_or_404(Applicant, pk=pk)
@@ -151,6 +167,7 @@ def comment(request, pk):
     return render(request, 'applicant_info.html', context)
 
 
+@login_required
 def checkout(request, pk):
     check_out = request.POST.get('Checked-Out')
     participant = get_object_or_404(Applicant, pk=pk)
@@ -176,6 +193,7 @@ def checkout(request, pk):
     return render(request, 'applicant_info.html', context)
 
 
+@login_required
 def approved(request, pk):
     approved = request.POST.get('Approve')
     participant = get_object_or_404(Applicant, pk=pk)
@@ -198,6 +216,7 @@ def approved(request, pk):
     }
     return render(request, 'applicant_info.html', context)
 
+@login_required
 def checkin(request, pk):
     check_in = request.POST.get('Checked-In')
     participant = get_object_or_404(Applicant, pk=pk)
@@ -219,12 +238,14 @@ def checkin(request, pk):
     }
     return render(request, 'applicant_info.html', context)
 
+@login_required
 def new_applicant(request):
     context = {
         
         }
     return render(request, 'md_apply.html', context)
 
+@login_required
 def profile(request):
     context = {
 
@@ -247,3 +268,38 @@ def printout(request):
         'applicant_info': applicant_info
     }
     return render(request, 'printout.html', context)
+
+def login_user(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('mosque_dashboard')
+        else:
+            messages.success(request, ('Invalid Username or Password, Please Try Again!'))
+            return redirect('login')
+    else:
+        return render(request, 'login.html', {})
+
+def log_out(request):
+    logout(request)
+    return redirect('login')
+
+@login_required
+def user_signup(request):
+    if request.method == "POST":
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password1']
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            messages.success(request, "Registration Succesful. You are now logged in")
+            return redirect('home')
+    else:
+        form = CreateUserForm()
+    return render(request, 'test.html', {'form': form})
+    

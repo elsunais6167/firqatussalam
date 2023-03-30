@@ -14,4 +14,7 @@ urlpatterns = [
     path('approved/<int:pk>/', views.approved, name='approved'),
     path('checkin/<str:pk>/', views.checkin, name='checkin'),
     path('checkout/<str:pk>/', views.checkout, name='checkout'),
+    path('user_signup', views.user_signup, name='user_signup'),
+    path('login/', views.login_user, name='login'),
+    path('logout/', views.log_out, name='logout'),
 ]
