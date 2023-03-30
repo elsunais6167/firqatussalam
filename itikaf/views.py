@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from .models import Mosque, Applicant
+from .models import Mosque, Applicant, Approval, CheckIn, CheckOut, Comment
 from django.contrib import messages
-
+from django.shortcuts import get_object_or_404
+from django.urls import reverse
 import re
 
 # Create your views here.
@@ -93,10 +93,129 @@ def mosque_dashboard(request):
 
 def applicant_info(request, pk):
     applicant_info = Applicant.objects.get(id=pk)
-    #mosque_name = Mosque.objects.get(id=pk)
+    applicants_id = Applicant.objects.get(id=pk)
+    applicants_id = str(applicants_id)
+    applicant_id = re.sub('[^0-9]', '', applicants_id)
+    applicant_id = int(applicant_id)
+    
+    latest_comment = None
+    comments = Comment.objects.filter(participant=applicant_info)
+    if comments.exists():
+        latest_comment = comments.last()
+    
+    latest_check_out = None
+    check_out = CheckOut.objects.filter(participant=applicant_info)
+    if check_out.exists():
+        latest_check_out = check_out.last()
+
+    latest_check_in = None
+    check_in = CheckIn.objects.filter(participant=applicant_info)
+    if check_in.exists():
+        latest_check_in = check_in.last()
+    
+    latest_approved = None
+    approved = Approval.objects.filter(participant=applicant_info)
+    if approved.exists():
+        latest_approved = approved.last()
+    
     context = {
         'applicant_info': applicant_info,
-        #'mosque_name': mosque_name,
+        'applicant_id': applicant_id,
+        'latest_comment': latest_comment.additional_info if latest_comment else None,
+        'latest_check_out': latest_check_out.check_out if latest_check_out else None,
+        'latest_check_in': latest_check_in.check_in if latest_check_in else None,
+        'latest_approved': latest_approved.approved if latest_approved else None,
+      
+    }
+    return render(request, 'applicant_info.html', context)
+
+def comment(request, pk):
+    comment = request.POST.get('comment')
+    participant = get_object_or_404(Applicant, pk=pk)
+
+    if request.method == "POST":
+        additional_info = comment
+        participant = participant
+
+        com = Comment(
+            participant = participant,
+            additional_info = additional_info
+        )
+        com.save()
+
+        url = reverse('applicant_info', kwargs={'pk': participant.pk})
+        return redirect(url)
+    context = {
+        'participant': participant
+    }
+    return render(request, 'applicant_info.html', context)
+
+
+def checkout(request, pk):
+    check_out = request.POST.get('Checked-Out')
+    participant = get_object_or_404(Applicant, pk=pk)
+
+
+    if request.method == "POST":
+        check_out = check_out
+        participant = participant
+        
+        
+        cko = CheckOut(
+            participant = participant,
+            check_out = check_out
+        )
+        cko.save()
+
+        url = reverse('applicant_info', kwargs={'pk': participant.pk})
+        return redirect(url)
+    
+    context = {
+        'participant': participant
+    }
+    return render(request, 'applicant_info.html', context)
+
+
+def approved(request, pk):
+    approved = request.POST.get('Approve')
+    participant = get_object_or_404(Applicant, pk=pk)
+
+    if request.method == "POST":
+        approved = approved
+        participant = participant
+
+        app = Approval(
+            participant = participant,
+            approved = approved
+        )
+        app.save()
+
+        url = reverse('applicant_info', kwargs={'pk': participant.pk})
+        return redirect(url)
+
+    context = {
+        'participant': participant
+    }
+    return render(request, 'applicant_info.html', context)
+
+def checkin(request, pk):
+    check_in = request.POST.get('Checked-In')
+    participant = get_object_or_404(Applicant, pk=pk)
+
+    if request.method == "POST":
+        check_in = check_in
+        participant = participant
+
+        chk = CheckIn(
+            participant = participant,
+            check_in = check_in
+        )
+        chk.save()
+
+        url = reverse('applicant_info', kwargs={'pk': participant.pk})
+        return redirect(url)
+    context = {
+        'participant': participant
     }
     return render(request, 'applicant_info.html', context)
 
@@ -111,6 +230,7 @@ def profile(request):
 
     }
     return render(request, 'md_profile.html', context)
+
 
 def printout(request):
     applicant_id = request.session.get('applicant_id')

@@ -5,27 +5,110 @@
 <div class="content-wrapper">
     <!-- Content -->
 
-    {% include 'data.html' %}
 
-    <div class="row">
-        <div class="col-md-12">
-            <ul class="nav nav-pills flex-column flex-md-row mb-3">
-                <li class="nav-item">
-                    <a class="nav-link active" href="javascript:void(0);"><i class="bx bxl-telegram me-1"></i>
-                        Approval</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'new_applicant' %}"><i class='bx bx-add-to-queue'></i> Add New
-                        Applicant</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'profile' %}"><i class="bx bx-cog me-1"></i> Settings </a>
-                </li>
-            </ul>
-            {% include 'info.html' %}
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Information/</span> {{ applicant_info }}</h4> <a href="{% url 'mosque_dashboard' %}" class="btn btn-primary me-2">Go Back to Dashboard</a>
+        <div class="card mb-4">
+            <h5 class="card-header">Activities</h5>
+            <div class="table-responsive text-nowrap">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Approval</th>
+                            <th>Checked-In</th>
+                            <th>Checked-Out</th>
+                            <th>Comment</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                        <tr>
+                            <td>
+                                <form method="POST" action="{% url 'approved' applicant_info.pk %}">
+                                    {% csrf_token %}
+                                    <input class="form-control" type="hidden" id="mosque_user" name="mosque_user" value=" " />
+                                    <input class="form-control" type="hidden" id="user" name="user"
+                                        value="{{ applicant_id }}" />
+                                    
+                                    <input type="hidden" value="Approved" class="form-control" id="Approve" name="Approve" required />
+                                    <div class="mt-2">
+                                        <button type="submit" class="btn btn-primary me-2">Approve</button>
+                                    </div>
+                                </form>
+                                {% if latest_approved %}
+                                <div class="mt-2">
+                                    <input type="text" class="form-control" 
+                                    value="{{ latest_approved }}" id="IdNum" name="IdNum" readonly/>
+                                {% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                <form method="POST" action="{% url 'checkin' applicant_info.pk %}">
+                                    {% csrf_token %}
+                                    <input class="form-control" type="hidden" id="mosque_user" name="mosque_user" value=" " />
+                                    <input class="form-control" type="hidden" id="user" name="user"
+                                        value="{{ applicant_id }}" />
+                                    
+                                    <input type="date" class="form-control" id="Checked-In" name="Checked-In" required />
+                                    <div class="mt-2">
+                                        <button type="submit" class="btn btn-primary me-2">Checked-In</button>
+                                    </div>
+                                </form>
+                                {% if latest_check_in %}
+                                <div class="mt-2">
+                                    <input type="text" class="form-control" 
+                                    value="{{ latest_check_in }}" id="IdNum" name="IdNum" readonly/>
+                                {% endif %}
+                                
+                            </div>
+                            </td>
+                            <td>
+                                <form method="POST" action="{% url 'checkout' applicant_info.pk %}">
+                                    {% csrf_token %}
+                                    <input class="form-control" type="hidden" id="mosque_user" name="mosque_user" value=" " />
+                                    <input class="form-control" type="hidden" id="user" name="user"
+                                        value="{{ applicant_id }}" />
+                                    
+                                    <input type="date" class="form-control" id="Checked-Out" name="Checked-Out" required />
+                                    <div class="mt-2">
+                                        <button type="submit" class="btn btn-primary me-2">Checked-Out</button>
+                                    </div>
+                                </form>
+                                {% if latest_check_out %}
+                                <div class="mt-2">
+                                    <input type="text" class="form-control" 
+                                    value="{{ latest_check_out }}" id="IdNum" name="IdNum" readonly/>
+                                {% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                <form method="POST" action="{% url 'comment' applicant_info.pk %}">
+                                    {% csrf_token %}
+                                    <input class="form-control" type="hidden" id="mosque_user" name="mosque_user" value=" " />
+                                    <input class="form-control" type="hidden" id="user" name="user"
+                                        value="{{ applicant_id }}" />
+                                    
+                                    <input class="form-control" type="text" id="comment" name="comment" required />
+                                    <div class="mt-2">
+                                        <button type="submit" class="btn btn-primary me-2">Submit</button>
+                                    </div>
+                                </form>
+                                {% if latest_comment %}
+                                <div class="mt-2">
+                                    <input type="text" class="form-control" 
+                                    value="{{ latest_comment }}" id="IdNum" name="IdNum" readonly/>
+                                {% endif %}
+                            </div>
+                            </td>
+                            
+                        </tr>
+                       
+                    </tbody>
+                </table>
+            </div>
         </div>
+
+        {% include 'info.html' %}
+
     </div>
-</div>
-</div>
-<!-- / Content -->
-{% endblock content%}
+    <!-- / Content -->
+    {% endblock content%}

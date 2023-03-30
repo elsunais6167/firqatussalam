@@ -39,13 +39,38 @@ class Applicant(models.Model):
     def __str__(self):
         return f'{self.name} - {self.mosque}'
 
-class Processing(models.Model):
-    participant = models.OneToOneField(Applicant, on_delete=models.CASCADE)
-    approved = models.BooleanField(default=False)
-    check_in = models.DateField(blank=True)
-    check_out = models.DateField(blank=True)
-    additional_info = models.TextField(blank=True)
+class Approval(models.Model):
+    participant = models.ForeignKey(Applicant, on_delete=models.CASCADE)
+    approved = models.CharField(max_length=30, default='Disapproved')
     approved_by = models.ForeignKey(MosqueAdmin, on_delete=models.SET_NULL, null=True)
+    date_added = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
-        return self.participant
+        return self.approved
+
+class CheckIn(models.Model):
+    participant = models.ForeignKey(Applicant, on_delete=models.CASCADE)
+    check_in = models.CharField(max_length=30, null=True)
+    approved_by = models.ForeignKey(MosqueAdmin, on_delete=models.SET_NULL, null=True)
+    date_added = models.DateTimeField(auto_now_add=True, null=True)
+
+    def __str__(self):
+        return self.check_in
+
+class CheckOut(models.Model):
+    participant = models.ForeignKey(Applicant, on_delete=models.CASCADE)
+    check_out = models.CharField(max_length=30, null=True)
+    approved_by = models.ForeignKey(MosqueAdmin, on_delete=models.SET_NULL, null=True)
+    date_added = models.DateTimeField(auto_now_add=True, null=True)
+
+    def __str__(self):
+        return self.check_out
+
+class Comment(models.Model):
+    participant = models.ForeignKey(Applicant, on_delete=models.CASCADE)
+    additional_info = models.CharField(max_length=30, null=True)
+    approved_by = models.ForeignKey(MosqueAdmin, on_delete=models.SET_NULL, null=True)
+    date_added = models.DateTimeField(auto_now_add=True, null=True)
+
+    def __str__(self):
+        return self.additional_info

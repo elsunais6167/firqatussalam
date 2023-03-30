@@ -8,6 +8,10 @@ urlpatterns = [
     path('mosque_dashboard', views.mosque_dashboard, name='mosque_dashboard'),
     path('new_applicant', views.new_applicant, name='new_applicant'),
     path('profile', views.profile, name='profile'),
-    path('applicant_info/<str:pk>/', views.applicant_info, name='applicant_info'),
+    path('applicant_info/<int:pk>/', views.applicant_info, name='applicant_info'),
     path('printout', views.printout, name='printout'),
+    path('comment/<str:pk>/', views.comment, name='comment'),
+    path('approved/<int:pk>/', views.approved, name='approved'),
+    path('checkin/<str:pk>/', views.checkin, name='checkin'),
+    path('checkout/<str:pk>/', views.checkout, name='checkout'),
 ]
