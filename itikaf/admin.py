@@ -4,4 +4,5 @@ from .models import *
 admin.site.register(Mosque)
 admin.site.register(Applicant)
 admin.site.register(MosqueAdmin)
+admin.site.register(StateAdmin)
 #admin.site.register(Processing)

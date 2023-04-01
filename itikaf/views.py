@@ -5,6 +5,8 @@ from django.urls import reverse
 from .models import Mosque, Applicant, Approval, CheckIn, CheckOut, Comment, MosqueAdmin
 from .forms import CreateUserForm
 
+from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -356,7 +358,13 @@ def login_user(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('mosque_dashboard')
+            if hasattr(user, 'mosqueadmin'):
+                return redirect('mosque_admin')
+            elif hasattr(user, 'stateadmin'):
+                return redirect('state_admin')
+            else:
+                # Handle other cases if necessary
+                pass
         else:
             messages.success(request, ('Invalid Username or Password, Please Try Again!'))
             return redirect('login')
@@ -381,5 +389,24 @@ def user_signup(request):
             return redirect('home')
     else:
         form = CreateUserForm()
-    return render(request, 'test.html', {'form': form})
-    
+    return render(request, 'user_signup.html', {'form': form})
+
+@login_required
+def state_admin(request):
+
+    mosques = Mosque.objects.all()
+
+    context = {
+        'mosques': mosques
+        }
+
+    return render(request, 'state_admin.html', context)
+
+@login_required
+def add_mosque(request):
+
+    context = {
+
+    }
+
+    return render(request, 'add_mosque.html', context)

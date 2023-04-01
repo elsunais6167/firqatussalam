@@ -17,4 +17,6 @@ urlpatterns = [
     path('user_signup', views.user_signup, name='user_signup'),
     path('login/', views.login_user, name='login'),
     path('logout/', views.log_out, name='logout'),
+    path('state_admin/', views.state_admin, name='state_admin'),
+    path('add_mosque/', views.add_mosque, name='add_mosque'),
 ]
