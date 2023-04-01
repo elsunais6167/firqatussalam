@@ -27,7 +27,7 @@
             <div class="card mb-4">
                 <h5 class="card-header"> {{ title }} </h5>
                 <!-- Account -->
-                <form method="POST" action="{% url 'form' %}" enctype="multipart/form-data">
+                <form method="POST" action="{% url 'new_applicant' %}" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="card-body">
                         <div class="d-flex align-items-start align-items-sm-center gap-4">
@@ -48,9 +48,7 @@
                     <div class="card-body">
 
 
-                        <input class="form-control" type="hidden" id="mos" name="mos" value="{{ masjid_id }}" />
-
-                        <div class="row">
+                            <div class="row">
 
                             <div class="mb-3 col-md-6">
                                 <label for="AName" class="form-label">Name</label>

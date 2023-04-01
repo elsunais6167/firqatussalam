@@ -7,30 +7,67 @@
 
     {% include 'data.html' %}
 
-        <div class="row">
-            <div class="col-md-12">
-                <ul class="nav nav-pills flex-column flex-md-row mb-3">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'mosque_dashboard' %}"><i class="bx bxl-telegram me-1"></i>
-                            Approval</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'new_applicant' %}"><i
-                             class='bx bx-add-to-queue'></i> Add New Applicant</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="javascript:void(0);"><i
-                                class="bx bx-cog me-1"></i> Settings </a>
-                    </li>
-                </ul>
-                
-                <div class="card mb-4">
-                    <h5 class="card-header">Profile Details</h5>
+    <div class="row">
+        <div class="col-md-12">
+            <ul class="nav nav-pills flex-column flex-md-row mb-3">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'mosque_dashboard' %}"><i class="bx bxl-telegram me-1"></i>
+                        Approval</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'new_applicant' %}"><i class='bx bx-add-to-queue'></i> Add New
+                        Applicant</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="javascript:void(0);"><i class="bx bx-cog me-1"></i> Settings </a>
+                </li>
+            </ul>
 
-                </div>
+            <div class="card mb-4">
+                <h5 class="card-header">Profile Details</h5>
+
+
+                <!-- Account -->
+                <form method="POST" action="{% url 'form' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <hr class="my-0" />
+                    <div class="card-body">
+
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label for="AName" class="form-label">Name</label>
+                                <input class="form-control" type="text" id="AName" name="AName" required />
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label for="lga" class="form-label">Local Government</label>
+                                <input class="form-control" type="text" id="lga" name="lga" required />
+                            </div>
+
+                            <div class="mb-3 col-md-6">
+                                <label for="address" class="form-label">Address</label>
+                                <input class="form-control" type="text" id="address" name="address" required />
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label" for="phoneNumber">Phone Number</label>
+                                <div class="input-group input-group-merge">
+                                    <span class="input-group-text">NG (+234)</span>
+                                    <input type="number" id="phoneNumber" name="phoneNumber" class="form-control"
+                                        placeholder="07019575268" required />
+                                </div>
+                            </div>
+                            <div form-check form-switch mb-2>
+                                <label class="form-check-label" for="flexSwitchCheckDefault">Accepting Applications</label>
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" required />
+                            </div>
+                            <div class="mt-2">
+                                <button type="submit" class="btn btn-primary me-2">Update</button>
+                            </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
+
 <!-- / Content -->
 {% endblock content%}

@@ -34,6 +34,7 @@ def apply(request, pk):
     return render(request, 'apply.html', context)
 
 def application(request):
+    
     photo = request.FILES.get('passport')
     mosque_id = request.POST.get('mos')
     name = request.POST.get('AName')
@@ -87,7 +88,7 @@ def application(request):
         details.save()
         request.session['applicant_id'] = details.id
         return redirect('printout')
-    
+
     return render(request, 'home.html')
 
 @login_required
@@ -97,11 +98,17 @@ def mosque_dashboard(request):
 
     list_applicants = Applicant.objects.filter(mosque=mosque)
     total_applicants = list_applicants.count()
-
+    num_applicants_with_approval = Applicant.objects.filter(mosque=mosque, approval__isnull=False).distinct().count()
+    num_applicants_with_checkin = Applicant.objects.filter(mosque=mosque, checkin__isnull=False).distinct().count()
+    num_applicants_with_checkout = Applicant.objects.filter(mosque=mosque, checkout__isnull=False).distinct().count()
+    
     context = {
         'list_applicants': list_applicants,
         'mosque':mosque,
         'total_applicants': total_applicants,
+        'num_applicants_with_approval': num_applicants_with_approval,
+        'num_applicants_with_checkin': num_applicants_with_checkin,
+        'num_applicants_with_checkout': num_applicants_with_checkout,
     }
     return render(request, 'mosque_dashboard.html', context)
 
@@ -240,15 +247,67 @@ def checkin(request, pk):
 
 @login_required
 def new_applicant(request):
+    #mosque_admin = get_object_or_404(MosqueAdmin, user=request.user)
+    #mosque_id = mosque_admin.mosque.id
+    #added_by = mosque_admin.id
+
+    if request.method == 'POST':
+        # Get the form data
+        mosque_admin = get_object_or_404(MosqueAdmin, user=request.user)
+        photo = request.FILES.get('passport')
+        name = request.POST.get('AName')
+        age = request.POST.get('age')
+        address = request.POST.get('address')
+        phone = request.POST.get('phoneNumber')
+        next_of_kin_name = request.POST.get('NName')
+        next_of_kin_phone = request.POST.get('NphoneNumber')
+        medical_condition = request.POST.get('mdcc')
+        start_date = request.POST.get('SDate')
+        end_date = request.POST.get('EDate')
+        request.method = 'POST'
+        id_type = request.POST['IdType']
+        id_card_no = request.POST.get('IdNum')
+        id_image = request.FILES.get('id-card')
+        mosque_id = mosque_admin.mosque.id
+        added_by = mosque_admin
+
+
+        # Create the new applicant object
+        details = Applicant(
+            photo=photo,
+            mosque_id=mosque_id,
+            name=name,
+            age=age,
+            address=address,
+            phone=phone,
+            next_of_kin_name=next_of_kin_name,
+            next_of_kin_phone=next_of_kin_phone,
+            medical_condition=medical_condition,
+            start_date=start_date,
+            end_date=end_date,
+            id_type=id_type,
+            id_card_no=id_card_no,
+            id_image=id_image,
+            added_by=added_by
+        )
+        details.save()
+        return redirect('mosque_dashboard')
+
     context = {
-        
-        }
+
+    }
     return render(request, 'md_apply.html', context)
+
 
 @login_required
 def profile(request):
-    context = {
+    mosque_admin = get_object_or_404(MosqueAdmin, user=request.user)
+    #mosque = mosque_admin.mosque
 
+    profile = mosque_admin
+
+    context = {
+        'profile': profile
     }
     return render(request, 'md_profile.html', context)
 
