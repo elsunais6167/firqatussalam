@@ -8,7 +8,7 @@ class Mosque(models.Model):
     phone = models.CharField(max_length=11)
     address = models.CharField(max_length=300)
     accepting_applications = models.BooleanField(default=True)
-    date_created = models.DateTimeField(auto_now_add=True)
+    date_created = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
         return f'{self.name} - {self.lga}'

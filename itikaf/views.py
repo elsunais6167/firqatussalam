@@ -302,12 +302,33 @@ def new_applicant(request):
 @login_required
 def profile(request):
     mosque_admin = get_object_or_404(MosqueAdmin, user=request.user)
-    #mosque = mosque_admin.mosque
+    mosque = mosque_admin.mosque
 
-    profile = mosque_admin
+    mosque_id = mosque_admin.mosque
+    mosque_id= str(mosque_id)
+    mosque_id = re.sub('[^0-9]', '', mosque_id)
+    mosque_id = int(mosque_id)
 
+    if request.method == 'POST':
+        name = request.POST.get('AName')
+        lga = request.POST.get('lga')
+        address = request.POST.get('address')
+        phone = request.POST.get('phoneNumber')
+        accepting_applications = request.POST.get('aa') == 'on'
+
+        update_profile = Mosque(
+            id = mosque_id,
+            name = name,
+            lga = lga,
+            address = address,
+            phone = phone,
+            accepting_applications = accepting_applications
+        )
+        # Save the updated profile details
+        update_profile.save()
+        return redirect('profile')
     context = {
-        'profile': profile
+        'profile': mosque
     }
     return render(request, 'md_profile.html', context)
 
