@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, HttpResponseRedirect
 from django.urls import reverse
 
 from .models import Mosque, Applicant, Approval, CheckIn, CheckOut, Comment, MosqueAdmin
@@ -350,7 +350,15 @@ def printout(request):
     }
     return render(request, 'printout.html', context)
 
+def loggingout(request):
+    logout(request)
+
+    return HttpResponseRedirect('/login/')
+
+
 def login_user(request):
+    error_message = ""
+    login_error = ""
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -362,17 +370,11 @@ def login_user(request):
             elif hasattr(user, 'stateadmin'):
                 return redirect('state_admin')
             else:
-                # Handle other cases if necessary
-                pass
+                error_message = 'Your login details are correct. However, you have not been assigned a Mosque to Manage. Please contact state coordinator'
         else:
-            messages.success(request, ('Invalid Username or Password, Please Try Again!'))
-            return redirect('login')
-    else:
-        return render(request, 'login.html', {})
-
-def log_out(request):
-    logout(request)
-    return redirect('login')
+            login_error ='Invalid Username or Password, Please Try Again!'
+            
+    return render(request, 'login.html', {'error_message': error_message, 'login_error': login_error})
 
 @login_required
 def user_signup(request):
@@ -380,11 +382,6 @@ def user_signup(request):
         form = CreateUserForm(request.POST)
         if form.is_valid():
             form.save()
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password1']
-            user = authenticate(username=username, password=password)
-            login(request, user)
-            messages.success(request, "Registration Succesful. You are now logged in")
             return redirect('user_signup')
     else:
         form = CreateUserForm()
@@ -425,3 +422,6 @@ def assign_admin(request, pk):
     }
 
     return render(request, 'assign_admin.html', context)
+
+def login_error(request):
+    return render(request, 'login_error.html')
