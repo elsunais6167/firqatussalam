@@ -19,4 +19,5 @@ urlpatterns = [
     path('logout/', views.log_out, name='logout'),
     path('state_admin/', views.state_admin, name='state_admin'),
     path('add_mosque/', views.add_mosque, name='add_mosque'),
+    path('assign_admin/<str:pk>/', views.assign_admin, name='assign_admin' ),
 ]

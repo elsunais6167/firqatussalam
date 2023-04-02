@@ -5,8 +5,7 @@ from django.urls import reverse
 from .models import Mosque, Applicant, Approval, CheckIn, CheckOut, Comment, MosqueAdmin
 from .forms import CreateUserForm
 
-from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -386,14 +385,21 @@ def user_signup(request):
             user = authenticate(username=username, password=password)
             login(request, user)
             messages.success(request, "Registration Succesful. You are now logged in")
-            return redirect('home')
+            return redirect('user_signup')
     else:
         form = CreateUserForm()
-    return render(request, 'user_signup.html', {'form': form})
+    
+    admins = User.objects.all()
+
+    context = {
+        'form': form,
+        'admins': admins
+
+    }
+    return render(request, 'user_signup.html', context)
 
 @login_required
 def state_admin(request):
-
     mosques = Mosque.objects.all()
 
     context = {
@@ -410,3 +416,12 @@ def add_mosque(request):
     }
 
     return render(request, 'add_mosque.html', context)
+
+def assign_admin(request, pk):
+    mosque_id = get_object_or_404(Mosque, id=pk)
+    
+    context = {
+        'mosque_id': mosque_id
+    }
+
+    return render(request, 'assign_admin.html', context)
