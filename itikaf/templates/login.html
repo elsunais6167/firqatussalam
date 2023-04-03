@@ -41,8 +41,6 @@
                                         aria-label="Close"></button>
                                 </div>
 
-
-
                                 <form action="" method="POST">
                                     {% csrf_token %}
 
@@ -57,23 +55,20 @@
                                         <input type="password" class="form-control" name="password">
                                     </div>
                                     <button type="submit" class="btn btn-primary">Login</button>
-
                                 </form>
-
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <script>
-            {% if login_error or error_message %}
-            document.getElementById("alert-div").style.display = "block";
-            {% else %}
-            document.getElementById("alert-div").style.display = "none";
-            {% endif %}
-        </script>
     </div>
 </div>
-
+<script>
+    {% if login_error or error_message %}
+    document.getElementById("alert-div").style.display = "block";
+    {% else %}
+    document.getElementById("alert-div").style.display = "none";
+    {% endif %}
+</script>
 {% endblock content %}

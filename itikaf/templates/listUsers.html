@@ -5,17 +5,29 @@
 <!-- Content wrapper -->
 <div class="content-wrapper">
     <!-- Content -->
-
-    <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="fw-semibold py-3 mb-4"><span class="text-muted fw-light">Joint I'tikaf Committee /</span>Masjid
-            Search</h4>
-
-        <!-- Toast with Placements -->
-        <div class="bs-toast toast toast-placement-ex m-2" role="alert" aria-live="assertive" aria-atomic="true"
-            data-delay="2000">
-        </div>
-        <!-- Toast with Placements -->
-        <!-- Basic Bootstrap Table -->
+  
+    {% include 'data2.html' %}
+    <div class="row">
+      <div class="col-md-12">
+        <ul class="nav nav-pills flex-column flex-md-row mb-3">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'state_admin' %}"><i class="bx bxl-telegram me-1"></i>
+              List of Mosques</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'user_signup' %}"><i class='bx bx-add-to-queue'></i> Add a New
+              Admin</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'add_mosque' %}"><i class="bx bxs-building-house"></i> Add a New Mosque
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="javascript:void(0);"><i class="bx bx-list-ul"></i>
+                List of Admins</a>
+        </li>
+        </ul>
+        
         <div class="card">
             <h5 class="card-header">List of Admins</h5>
             <div class="table-responsive text-nowrap">
@@ -45,3 +57,4 @@
         </div>
     </div>
 </div>
+{% endblock content %}

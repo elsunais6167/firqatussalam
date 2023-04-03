@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<!-- Content wrapper -->
+<div class="content-wrapper">
+  <!-- Content -->
+
+  {% include 'data2.html' %}
+  <div class="row">
+    <div class="col-md-12">
+      <ul class="nav nav-pills flex-column flex-md-row mb-3">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'state_admin' %}"><i class="bx bxl-telegram me-1"></i>
+            List of Mosques</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'user_signup' %}"><i class='bx bx-add-to-queue'></i> Add a New
+            Admin</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="javascript:void(0);"><i class="bx bxs-building-house"></i> Add a New Mosque
+          </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'admin_list' %}"><i class="bx bx-list-ul"></i>
+                List of Admins</a>
+        </li>
+      </ul>
+      <div class="card mb-4">
+        <h5 class="card-header">New Mosque Form</h5>
+        <form method="POST" action="{% url 'add_mosque' %}">
+            {% csrf_token %}
+            <hr class="my-0" />
+            <div class="card-body">
+           
+            <div class="mb-3" >
+                <label for="AName" class="form-label">Name</label>
+                <input class="form-control" type="text" id="AName" name="AName"  required />
+            </div>
+            <div class="mb-3">
+                <label for="lga" class="form-label">Local Government</label>
+                <input class="form-control" type="text" id="lga" name="lga" required />
+            </div>
+            <div class="mb-3">
+                <label for="address" class="form-label">Address</label>
+                <input class="form-control" type="text" id="address" name="address" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="phoneNumber">Phone Number</label>
+                <div class="input-group input-group-merge">
+                    <span class="input-group-text">NG (+234)</span>
+                    <input type="number" id="phoneNumber" name="phoneNumber" class="form-control"
+                        placeholder="07019575268"  required />
+                </div>
+            </div>
+            <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" id="aa" name="aa" />
+                <label class="form-check-label" for="aa">Accepting Applications</label>
+            </div>
+            <div class="mt-2">
+              <button type="submit" class="btn btn-primary me-2">Add Mosque</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+  {% endblock content %}

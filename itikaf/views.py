@@ -24,10 +24,8 @@ def home(request):
 
 def apply(request, pk):
     title = Mosque.objects.get(id=pk)
-    masjids_id = Mosque.objects.get(id=pk)
-    masjids_id = str(masjids_id)
-    masjid_id = re.sub('[^0-9]', '', masjids_id)
-    masjid_id = int(masjid_id)
+    masjid_id = title.id
+    
     context = {
         'masjid_id': masjid_id,
         'title': title
@@ -116,10 +114,7 @@ def mosque_dashboard(request):
 @login_required
 def applicant_info(request, pk):
     applicant_info = Applicant.objects.get(id=pk)
-    applicants_id = Applicant.objects.get(id=pk)
-    applicants_id = str(applicants_id)
-    applicant_id = re.sub('[^0-9]', '', applicants_id)
-    applicant_id = int(applicant_id)
+    applicant_id = applicant_info.id
     
     latest_comment = None
     comments = Comment.objects.filter(participant=applicant_info)
@@ -151,6 +146,7 @@ def applicant_info(request, pk):
       
     }
     return render(request, 'applicant_info.html', context)
+
 
 @login_required
 def comment(request, pk):
@@ -299,16 +295,37 @@ def new_applicant(request):
     }
     return render(request, 'md_apply.html', context)
 
+def update_info(request, pk):
+    mosque_id = get_object_or_404(Mosque, id=pk)
+    mosque = Mosque.objects.get(id=pk)
+    
+    if request.method == 'POST':
+        name = request.POST.get('AName')
+        lga = request.POST.get('lga')
+        address = request.POST.get('address')
+        phone = request.POST.get('phoneNumber')
+        accepting_applications = request.POST.get('aa') == 'on'
+
+        mosque.name = name
+        mosque.lga = lga
+        mosque.address = address
+        mosque.phone = phone
+        mosque.accepting_applications = accepting_applications
+        mosque.save()
+        url = reverse('update_info', kwargs={'pk':  mosque_id.pk})
+        return redirect(url)
+        
+   
+    context = {
+        'profile':  mosque_id
+    }
+
+    return render(request, 'update_info.html', context)
 
 @login_required
 def profile(request):
     mosque_admin = get_object_or_404(MosqueAdmin, user=request.user)
     mosque = mosque_admin.mosque
-
-    mosque_id = mosque_admin.mosque
-    mosque_id= str(mosque_id)
-    mosque_id = re.sub('[^0-9]', '', mosque_id)
-    mosque_id = int(mosque_id)
 
     if request.method == 'POST':
         name = request.POST.get('AName')
@@ -317,16 +334,13 @@ def profile(request):
         phone = request.POST.get('phoneNumber')
         accepting_applications = request.POST.get('aa') == 'on'
 
-        update_profile = Mosque(
-            id = mosque_id,
-            name = name,
-            lga = lga,
-            address = address,
-            phone = phone,
-            accepting_applications = accepting_applications
-        )
-        # Save the updated profile details
-        update_profile.save()
+        mosque.name = name
+        mosque.lga = lga
+        mosque.address = address
+        mosque.phone = phone
+        mosque.accepting_applications = accepting_applications
+        mosque.save()
+        
         return redirect('profile')
     context = {
         'profile': mosque
@@ -407,6 +421,23 @@ def state_admin(request):
 
 @login_required
 def add_mosque(request):
+    if request.method == 'POST':
+        name = request.POST.get('AName')
+        lga = request.POST.get('lga')
+        address = request.POST.get('address')
+        phone = request.POST.get('phoneNumber')
+        accepting_applications = request.POST.get('aa') == 'on'
+
+        update_profile = Mosque(
+            name = name,
+            lga = lga,
+            address = address,
+            phone = phone,
+            accepting_applications = accepting_applications
+        )
+        # Save the updated profile details
+        update_profile.save()
+        return redirect('state_admin')
 
     context = {
 
@@ -423,5 +454,8 @@ def assign_admin(request, pk):
 
     return render(request, 'assign_admin.html', context)
 
-def login_error(request):
-    return render(request, 'login_error.html')
+def listUsers(request):
+    context = {
+
+    }
+    return render(request, 'listUsers.html', context)

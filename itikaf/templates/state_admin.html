@@ -19,8 +19,12 @@
                         Admin</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'add_mosque' %}"><i class="bx bx-cog me-1"></i> Add a New Mosque
+                    <a class="nav-link" href="{% url 'add_mosque' %}"><i class="bx bxs-building-house"></i> Add a New Mosque
                     </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'admin_list' %}"><i class="bx bx-list-ul"></i>
+                        List of Admins</a>
                 </li>
             </ul>
 
@@ -48,7 +52,7 @@
                                 <td>{{m.phone}}</td>
                                 <td>
                                     <a href="{% url 'assign_admin' m.id %}" class="btn btn-primary me-2">Assign Admin</a>
-                                    <a href="{% url 'assign_admin' m.id %}" class="btn btn-primary me-2">Update Info</a>
+                                    <a href="{% url 'update_info' m.id %}" class="btn btn-primary me-2">Update Info</a>
                                 </td>
                             </tr>
                             {% endfor %}

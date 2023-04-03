@@ -6,6 +6,7 @@ urlpatterns = [
     path('logout/', views.loggingout, name='logout'),
     path('applyi/<str:pk>/', views.apply, name='applyi'),
     path('form', views.application, name='form'),
+    path('update_info/<int:pk>/', views.update_info, name='update_info'),
     path('mosque_dashboard', views.mosque_dashboard, name='mosque_dashboard'),
     path('new_applicant', views.new_applicant, name='new_applicant'),
     path('profile', views.profile, name='profile'),
@@ -20,4 +21,6 @@ urlpatterns = [
     path('state_admin/', views.state_admin, name='state_admin'),
     path('add_mosque/', views.add_mosque, name='add_mosque'),
     path('assign_admin/<str:pk>/', views.assign_admin, name='assign_admin' ),
+    path('admin_list/', views.listUsers, name='admin_list'),
+    
 ]

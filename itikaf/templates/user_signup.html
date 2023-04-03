@@ -19,14 +19,22 @@
             Admin</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'add_mosque' %}"><i class="bx bx-cog me-1"></i> Add a New Mosque
+          <a class="nav-link" href="{% url 'add_mosque' %}"><i class="bx bxs-building-house"></i> Add a New Mosque
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'admin_list' %}"><i class="bx bx-list-ul"></i>
+              List of Admins</a>
+      </li>
       </ul>
       <div class="card mb-4">
         <h5 class="card-header">New Admin Form</h5>
         {% if form.errors %}
-        <p>There was an error in your form</p>
+        <div class="alert alert-danger alert-dismissible" role="alert">
+          There was an error in your form. Please try again and be careful this time.
+          <button type="button" class="btn-close" data-bs-dismiss="alert"
+              aria-label="Close"></button>
+      </div>
         {% endif %}
         <!-- Account -->
         <form method="POST" action="">
