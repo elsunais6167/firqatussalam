@@ -29,16 +29,13 @@
 
                                 </div>
 
-                                <div id="alert-div" class="alert alert-danger alert-dismissible" role="alert" {% if
-                                    login_error or error_message %} style="display: block;" {% else %}
-                                    style="display: none;" {% endif %}>
+                                <div id="alert-div" class="alert alert-danger alert-dismissible" role="alert" {% if login_error or error_message %} style="display: block;" {% else %} style="display: none;" {% endif %}>
                                     {% if login_error %}
-                                    {{ login_error }}
+                                        {{ login_error }}
                                     {% else %}
-                                    {{ error_message }}
+                                        {{ error_message }}
                                     {% endif %}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
 
                                 <form action="" method="POST">
@@ -64,11 +61,5 @@
         </div>
     </div>
 </div>
-<script>
-    {% if login_error or error_message %}
-    document.getElementById("alert-div").style.display = "block";
-    {% else %}
-    document.getElementById("alert-div").style.display = "none";
-    {% endif %}
-</script>
+
 {% endblock content %}

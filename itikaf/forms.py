@@ -13,3 +13,10 @@ class CreateUserForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
+
+class Admins(ModelForm):
+
+    mosque = forms.ModelChoiceField(queryset=Mosque.objects.all(), widget=forms.Select(attrs={'class': 'hide-field'}))
+    class Meta:
+        model = MosqueAdmin
+        fields = ['user', 'mosque']

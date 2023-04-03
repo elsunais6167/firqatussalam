@@ -38,6 +38,7 @@
                             <th>First Name</th>
                             <th>Surname</th>
                             <th>Email</th>
+                            <th>Assigned Mosque</th>
                         </tr>
                     </thead>
                     <tbody class="table-border-bottom-0">
@@ -49,6 +50,13 @@
                             <td>{{a.first_name}}</td>
                             <td>{{a.last_name}}</td>
                             <td>{{a.email}}</td>
+                            <td>
+                                {% for ma in mosque_admins %}
+                                    {% if ma.user == a %}
+                                        {{ ma.mosque.name }}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>

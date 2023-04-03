@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, HttpResponseRedirect
 from django.urls import reverse
 
 from .models import Mosque, Applicant, Approval, CheckIn, CheckOut, Comment, MosqueAdmin
-from .forms import CreateUserForm
+from .forms import CreateUserForm, Admins
 
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -295,10 +295,14 @@ def new_applicant(request):
     }
     return render(request, 'md_apply.html', context)
 
+@login_required
 def update_info(request, pk):
     mosque_id = get_object_or_404(Mosque, id=pk)
     mosque = Mosque.objects.get(id=pk)
-    
+    total_approved = Approval.objects.count() 
+    total_admins = User.objects.count()
+    total_mosques = Mosque.objects.count()
+
     if request.method == 'POST':
         name = request.POST.get('AName')
         lga = request.POST.get('lga')
@@ -317,7 +321,10 @@ def update_info(request, pk):
         
    
     context = {
-        'profile':  mosque_id
+        'profile':  mosque_id,
+        'total_approved': total_approved,
+        'total_admins': total_admins,
+        'total_mosques': total_mosques,
     }
 
     return render(request, 'update_info.html', context)
@@ -380,7 +387,7 @@ def login_user(request):
         if user is not None:
             login(request, user)
             if hasattr(user, 'mosqueadmin'):
-                return redirect('mosque_admin')
+                return redirect('mosque_dashboard')
             elif hasattr(user, 'stateadmin'):
                 return redirect('state_admin')
             else:
@@ -401,10 +408,16 @@ def user_signup(request):
         form = CreateUserForm()
     
     admins = User.objects.all()
+    total_approved = Approval.objects.count() 
+    total_admins = User.objects.count()
+    total_mosques = Mosque.objects.count()
 
     context = {
         'form': form,
-        'admins': admins
+        'admins': admins,
+        'total_approved': total_approved,
+        'total_admins': total_admins,
+        'total_mosques': total_mosques,
 
     }
     return render(request, 'user_signup.html', context)
@@ -412,9 +425,16 @@ def user_signup(request):
 @login_required
 def state_admin(request):
     mosques = Mosque.objects.all()
+    total_approved = Approval.objects.count() 
+    total_admins = User.objects.count()
+    total_mosques = Mosque.objects.count()
 
     context = {
-        'mosques': mosques
+        'mosques': mosques,
+        'total_approved': total_approved,
+        'total_admins': total_admins,
+        'total_mosques': total_mosques,
+
         }
 
     return render(request, 'state_admin.html', context)
@@ -438,24 +458,59 @@ def add_mosque(request):
         # Save the updated profile details
         update_profile.save()
         return redirect('state_admin')
+    
+    total_approved = Approval.objects.count() 
+    total_admins = User.objects.count()
+    total_mosques = Mosque.objects.count()
 
     context = {
-
+        'total_approved': total_approved,
+        'total_admins': total_admins,
+        'total_mosques': total_mosques,
     }
 
     return render(request, 'add_mosque.html', context)
 
+@login_required
 def assign_admin(request, pk):
-    mosque_id = get_object_or_404(Mosque, id=pk)
+    mosque = get_object_or_404(Mosque, id=pk)
+    if request.method == "POST":
+        form = Admins(request.POST)
+        if form.is_valid():
+            admin = form.save(commit=False)
+            admin.mosque = mosque
+            admin.save()
+            return redirect('admin_list')
+    else:
+        form = Admins(initial={'mosque': mosque})
     
+    total_approved = Approval.objects.count() 
+    total_admins = User.objects.count()
+    total_mosques = Mosque.objects.count()
+
     context = {
-        'mosque_id': mosque_id
+        'form': form,
+        'mosque': mosque,
+        'total_approved': total_approved,
+        'total_admins': total_admins,
+        'total_mosques': total_mosques,
     }
 
     return render(request, 'assign_admin.html', context)
 
+@login_required
 def listUsers(request):
-    context = {
+    admins = User.objects.all()
+    mosque_admins = MosqueAdmin.objects.all()
+    total_approved = Approval.objects.count() 
+    total_admins = User.objects.count()
+    total_mosques = Mosque.objects.count()
 
+    context = {
+        'admins': admins,
+        'mosque_admins': mosque_admins,
+        'total_approved': total_approved,
+        'total_admins': total_admins,
+        'total_mosques': total_mosques,
     }
     return render(request, 'listUsers.html', context)

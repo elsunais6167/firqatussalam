@@ -40,8 +40,10 @@ INSTALLED_APPS = [
     'itikaf',
     'crispy_forms',
     'widget_tweaks',
+    'crispy_bootstrap4',
 ]
 
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
@@ -125,7 +127,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 MEDIA_ROOT = '/media/'
-
+LOGIN_URL = '/login/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATICFILES_DIRS = [
