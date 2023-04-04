@@ -21,7 +21,7 @@ from itikaf.views import loggingout
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-   
-    path('', include('itikaf.urls')),
+    path('', include('landing.urls')),
+    path('itikaf/', include('itikaf.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
