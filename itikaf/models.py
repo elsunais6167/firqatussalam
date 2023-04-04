@@ -48,7 +48,9 @@ class Applicant(models.Model):
 
 class Approval(models.Model):
     participant = models.ForeignKey(Applicant, on_delete=models.CASCADE)
-    approved = models.CharField(max_length=30, default='Disapproved')
+    approved = models.CharField(max_length=30)
+    comment = models.CharField(max_length=50)
+    reason = models.CharField(max_length=50, null=True, blank=True)
     approved_by = models.ForeignKey(MosqueAdmin, on_delete=models.SET_NULL, null=True)
     date_added = models.DateTimeField(auto_now_add=True, null=True)
 
@@ -75,9 +77,10 @@ class CheckOut(models.Model):
 
 class Comment(models.Model):
     participant = models.ForeignKey(Applicant, on_delete=models.CASCADE)
-    additional_info = models.CharField(max_length=30, null=True)
+    action = models.CharField(max_length=50)
+    additional_info = models.CharField(max_length=500)
     approved_by = models.ForeignKey(MosqueAdmin, on_delete=models.SET_NULL, null=True)
     date_added = models.DateTimeField(auto_now_add=True, null=True)
 
-    def __str__(self):
+    def __int__(self):
         return self.additional_info

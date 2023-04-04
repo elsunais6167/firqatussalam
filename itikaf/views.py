@@ -6,14 +6,73 @@ from .models import Mosque, Applicant, Approval, CheckIn, CheckOut, Comment, Mos
 from .forms import CreateUserForm, Admins
 
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
 import re
 
-# Create your views here.
+# Users and Auth Views
+def is_state_admin(user):
+    return hasattr(user, 'stateadmin')
 
+def is_mosque_admin(user):
+    return hasattr(user, 'mosqueadmin')
+
+def login_user(request):
+    error_message = ""
+    login_error = ""
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            if hasattr(user, 'mosqueadmin'):
+                return redirect('mosque_dashboard')
+            elif hasattr(user, 'stateadmin'):
+                return redirect('state_admin')
+            else:
+                error_message = 'Your login details are correct. However, you have not been assigned a Mosque to Manage. Please contact state coordinator'
+        else:
+            login_error ='Invalid Username or Password, Please Try Again!'
+            
+    return render(request, 'login.html', {'error_message': error_message, 'login_error': login_error})
+
+
+def loggingout(request):
+    logout(request)
+
+    return HttpResponseRedirect('/login/')
+
+@login_required
+@user_passes_test(is_state_admin)
+def user_signup(request):
+    if request.method == "POST":
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('user_signup')
+    else:
+        form = CreateUserForm()
+    
+    admins = User.objects.all()
+    total_approved = Approval.objects.count() 
+    total_admins = User.objects.count()
+    total_mosques = Mosque.objects.count()
+
+    context = {
+        'form': form,
+        'admins': admins,
+        'total_approved': total_approved,
+        'total_admins': total_admins,
+        'total_mosques': total_mosques,
+
+    }
+    return render(request, 'user_signup.html', context)
+
+
+# Non Auth Views for Applicant
 def home(request):
     mosques = Mosque.objects.all()
     context = {
@@ -90,14 +149,34 @@ def application(request):
 
     return render(request, 'home.html')
 
+def printout(request):
+    applicant_id = request.session.get('applicant_id')
+    if not applicant_id:
+        messages.error(request, 'No applicant ID found.')
+        return redirect('home')
+
+    try:
+        applicant_info = Applicant.objects.get(id=applicant_id)
+    except Applicant.DoesNotExist:
+        messages.error(request, 'Applicant not found.')
+        return redirect('home')
+    context = {
+        'applicant_info': applicant_info
+    }
+    return render(request, 'printout.html', context)
+
+
+#Mosque admin's Views
 @login_required
+@user_passes_test(is_mosque_admin)
 def mosque_dashboard(request):
     mosque_admin = get_object_or_404(MosqueAdmin, user=request.user)
     mosque = mosque_admin.mosque
 
     list_applicants = Applicant.objects.filter(mosque=mosque)
     total_applicants = list_applicants.count()
-    num_applicants_with_approval = Applicant.objects.filter(mosque=mosque, approval__isnull=False).distinct().count()
+    num_applicants_with_approval = Applicant.objects.filter(mosque=mosque, approval__isnull=False, approval__approved='Approved').distinct().count()
+    num_applicants_with_disapproval = Applicant.objects.filter(mosque=mosque, approval__isnull=False, approval__approved='Disapproved').distinct().count()
     num_applicants_with_checkin = Applicant.objects.filter(mosque=mosque, checkin__isnull=False).distinct().count()
     num_applicants_with_checkout = Applicant.objects.filter(mosque=mosque, checkout__isnull=False).distinct().count()
     
@@ -108,10 +187,12 @@ def mosque_dashboard(request):
         'num_applicants_with_approval': num_applicants_with_approval,
         'num_applicants_with_checkin': num_applicants_with_checkin,
         'num_applicants_with_checkout': num_applicants_with_checkout,
+        'num_applicants_with_disapproval': num_applicants_with_disapproval,
     }
     return render(request, 'mosque_dashboard.html', context)
 
 @login_required
+@user_passes_test(is_mosque_admin)
 def applicant_info(request, pk):
     applicant_info = Applicant.objects.get(id=pk)
     applicant_id = applicant_info.id
@@ -149,22 +230,29 @@ def applicant_info(request, pk):
 
 
 @login_required
+@user_passes_test(is_mosque_admin)
 def comment(request, pk):
-    comment = request.POST.get('comment')
+    mosque_admin = get_object_or_404(MosqueAdmin, user=request.user)
+    #mosque = mosque_admin.mosque
     participant = get_object_or_404(Applicant, pk=pk)
+    try:
+        comment = Comment.objects.get(participant=participant)
+    except Comment.DoesNotExist:
+        comment = Comment(participant=participant)
 
     if request.method == "POST":
-        additional_info = comment
-        participant = participant
-
-        com = Comment(
-            participant = participant,
-            additional_info = additional_info
-        )
-        com.save()
-
-        url = reverse('applicant_info', kwargs={'pk': participant.pk})
-        return redirect(url)
+        action_value = request.POST.get('action')
+        reason_value = request.POST.get('comment')
+        if action_value in ['Suspension', 'Expulsion']:
+            comment.action = action_value
+            comment.additional_info = reason_value
+            comment.approved_by = mosque_admin
+            comment.save()
+            url = reverse('applicant_info', kwargs={'pk': participant.pk})
+            return redirect(url)
+        else:
+            # Handle invalid input
+            pass
     context = {
         'participant': participant
     }
@@ -172,77 +260,89 @@ def comment(request, pk):
 
 
 @login_required
+@user_passes_test(is_mosque_admin)
 def checkout(request, pk):
-    check_out = request.POST.get('Checked-Out')
+    mosque_admin = get_object_or_404(MosqueAdmin, user=request.user)
     participant = get_object_or_404(Applicant, pk=pk)
-
+    try:
+        checkout = CheckOut.objects.get(participant=participant)
+    except CheckOut.DoesNotExist:
+        checkout = CheckOut(participant=participant)
 
     if request.method == "POST":
-        check_out = check_out
-        participant = participant
-        
-        
-        cko = CheckOut(
-            participant = participant,
-            check_out = check_out
-        )
-        cko.save()
+        check_out_value = request.POST.get('Checked-Out')
+        if check_out_value is not None:
+            checkout.check_out = check_out_value
+            checkout.approved_by = mosque_admin
+            checkout.save()
+            url = reverse('applicant_info', kwargs={'pk': participant.pk})
+            return redirect(url)
 
-        url = reverse('applicant_info', kwargs={'pk': participant.pk})
-        return redirect(url)
-    
     context = {
-        'participant': participant
+        'participant': participant,
+        'checkout': checkout,
     }
     return render(request, 'applicant_info.html', context)
 
 
 @login_required
+@user_passes_test(is_mosque_admin)
 def approved(request, pk):
-    approved = request.POST.get('Approve')
+    mosque_admin = get_object_or_404(MosqueAdmin, user=request.user)
+    #mosque = mosque_admin.mosque
     participant = get_object_or_404(Applicant, pk=pk)
+    try:
+        approval = Approval.objects.get(participant=participant)
+    except Approval.DoesNotExist:
+        approval = Approval(participant=participant)
 
     if request.method == "POST":
-        approved = approved
-        participant = participant
-
-        app = Approval(
-            participant = participant,
-            approved = approved
-        )
-        app.save()
-
-        url = reverse('applicant_info', kwargs={'pk': participant.pk})
-        return redirect(url)
-
+        approved_value = request.POST.get('reason')
+        approved_value = request.POST.get('approved')
+        reason_value = request.POST.get('reason')
+        if approved_value in ['Approved', 'Disapproved']:
+            approval.approved = approved_value
+            approval.reason = reason_value
+            approval.approved_by = mosque_admin
+            approval.save()
+            url = reverse('applicant_info', kwargs={'pk': participant.pk})
+            return redirect(url)
+        else:
+            # Handle invalid input
+            pass
     context = {
-        'participant': participant
+        'participant': participant,
+        'approval': approval,
     }
     return render(request, 'applicant_info.html', context)
 
 @login_required
+@user_passes_test(is_mosque_admin)
 def checkin(request, pk):
-    check_in = request.POST.get('Checked-In')
+    mosque_admin = get_object_or_404(MosqueAdmin, user=request.user)
     participant = get_object_or_404(Applicant, pk=pk)
+    try:
+        checkin = CheckIn.objects.get(participant=participant)
+    except CheckIn.DoesNotExist:
+        checkin = CheckIn(participant=participant)
 
     if request.method == "POST":
-        check_in = check_in
-        participant = participant
+        check_in_value = request.POST.get('Checked-In')
+        if check_in_value is not None:
+            checkin.check_in = check_in_value
+            checkin.approved_by = mosque_admin
+            checkin.save()
+            url = reverse('applicant_info', kwargs={'pk': participant.pk})
+            return redirect(url)
 
-        chk = CheckIn(
-            participant = participant,
-            check_in = check_in
-        )
-        chk.save()
-
-        url = reverse('applicant_info', kwargs={'pk': participant.pk})
-        return redirect(url)
     context = {
-        'participant': participant
+        'participant': participant,
+        'checkin': checkin,
     }
     return render(request, 'applicant_info.html', context)
 
 @login_required
+@user_passes_test(is_mosque_admin)
 def new_applicant(request):
     #mosque_admin = get_object_or_404(MosqueAdmin, user=request.user)
     #mosque_id = mosque_admin.mosque.id
@@ -295,41 +395,9 @@ def new_applicant(request):
     }
     return render(request, 'md_apply.html', context)
 
-@login_required
-def update_info(request, pk):
-    mosque_id = get_object_or_404(Mosque, id=pk)
-    mosque = Mosque.objects.get(id=pk)
-    total_approved = Approval.objects.count() 
-    total_admins = User.objects.count()
-    total_mosques = Mosque.objects.count()
-
-    if request.method == 'POST':
-        name = request.POST.get('AName')
-        lga = request.POST.get('lga')
-        address = request.POST.get('address')
-        phone = request.POST.get('phoneNumber')
-        accepting_applications = request.POST.get('aa') == 'on'
-
-        mosque.name = name
-        mosque.lga = lga
-        mosque.address = address
-        mosque.phone = phone
-        mosque.accepting_applications = accepting_applications
-        mosque.save()
-        url = reverse('update_info', kwargs={'pk':  mosque_id.pk})
-        return redirect(url)
-        
-   
-    context = {
-        'profile':  mosque_id,
-        'total_approved': total_approved,
-        'total_admins': total_admins,
-        'total_mosques': total_mosques,
-    }
-
-    return render(request, 'update_info.html', context)
 
 @login_required
+@user_passes_test(is_mosque_admin)
 def profile(request):
     mosque_admin = get_object_or_404(MosqueAdmin, user=request.user)
     mosque = mosque_admin.mosque
@@ -355,74 +423,10 @@ def profile(request):
     return render(request, 'md_profile.html', context)
 
 
-def printout(request):
-    applicant_id = request.session.get('applicant_id')
-    if not applicant_id:
-        messages.error(request, 'No applicant ID found.')
-        return redirect('home')
 
-    try:
-        applicant_info = Applicant.objects.get(id=applicant_id)
-    except Applicant.DoesNotExist:
-        messages.error(request, 'Applicant not found.')
-        return redirect('home')
-    context = {
-        'applicant_info': applicant_info
-    }
-    return render(request, 'printout.html', context)
-
-def loggingout(request):
-    logout(request)
-
-    return HttpResponseRedirect('/login/')
-
-
-def login_user(request):
-    error_message = ""
-    login_error = ""
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            if hasattr(user, 'mosqueadmin'):
-                return redirect('mosque_dashboard')
-            elif hasattr(user, 'stateadmin'):
-                return redirect('state_admin')
-            else:
-                error_message = 'Your login details are correct. However, you have not been assigned a Mosque to Manage. Please contact state coordinator'
-        else:
-            login_error ='Invalid Username or Password, Please Try Again!'
-            
-    return render(request, 'login.html', {'error_message': error_message, 'login_error': login_error})
-
+#State Admin's Views
 @login_required
-def user_signup(request):
-    if request.method == "POST":
-        form = CreateUserForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('user_signup')
-    else:
-        form = CreateUserForm()
-    
-    admins = User.objects.all()
-    total_approved = Approval.objects.count() 
-    total_admins = User.objects.count()
-    total_mosques = Mosque.objects.count()
-
-    context = {
-        'form': form,
-        'admins': admins,
-        'total_approved': total_approved,
-        'total_admins': total_admins,
-        'total_mosques': total_mosques,
-
-    }
-    return render(request, 'user_signup.html', context)
-
-@login_required
+@user_passes_test(is_state_admin)
 def state_admin(request):
     mosques = Mosque.objects.all()
     total_approved = Approval.objects.count() 
@@ -435,11 +439,44 @@ def state_admin(request):
         'total_admins': total_admins,
         'total_mosques': total_mosques,
 
-        }
-
+    }
     return render(request, 'state_admin.html', context)
 
 @login_required
+@user_passes_test(is_state_admin)
+def update_info(request, pk):
+    mosque_id = get_object_or_404(Mosque, id=pk)
+    mosque = Mosque.objects.get(id=pk)
+    total_approved = Approval.objects.count() 
+    total_admins = User.objects.count()
+    total_mosques = Mosque.objects.count()
+
+    if request.method == 'POST':
+        name = request.POST.get('AName')
+        lga = request.POST.get('lga')
+        address = request.POST.get('address')
+        phone = request.POST.get('phoneNumber')
+        accepting_applications = request.POST.get('aa') == 'on'
+
+        mosque.name = name
+        mosque.lga = lga
+        mosque.address = address
+        mosque.phone = phone
+        mosque.accepting_applications = accepting_applications
+        mosque.save()
+        url = reverse('update_info', kwargs={'pk':  mosque_id.pk})
+        return redirect(url)
+        
+    context = {
+        'profile':  mosque_id,
+        'total_approved': total_approved,
+        'total_admins': total_admins,
+        'total_mosques': total_mosques,
+    }
+    return render(request, 'update_info.html', context)
+
+@login_required
+@user_passes_test(is_state_admin)
 def add_mosque(request):
     if request.method == 'POST':
         name = request.POST.get('AName')
@@ -455,7 +492,6 @@ def add_mosque(request):
             phone = phone,
             accepting_applications = accepting_applications
         )
-        # Save the updated profile details
         update_profile.save()
         return redirect('state_admin')
     
@@ -468,10 +504,10 @@ def add_mosque(request):
         'total_admins': total_admins,
         'total_mosques': total_mosques,
     }
-
     return render(request, 'add_mosque.html', context)
 
 @login_required
+@user_passes_test(is_state_admin)
 def assign_admin(request, pk):
     mosque = get_object_or_404(Mosque, id=pk)
     if request.method == "POST":
@@ -495,10 +531,10 @@ def assign_admin(request, pk):
         'total_admins': total_admins,
         'total_mosques': total_mosques,
     }
-
     return render(request, 'assign_admin.html', context)
 
 @login_required
+@user_passes_test(is_state_admin)
 def listUsers(request):
     admins = User.objects.all()
     mosque_admins = MosqueAdmin.objects.all()

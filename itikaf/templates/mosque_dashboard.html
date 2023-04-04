@@ -4,7 +4,7 @@
 <!-- Content wrapper -->
 <div class="content-wrapper">
     <!-- Content -->
-
+    
     {% include 'data.html' %}
 
     <div class="row">
@@ -21,6 +21,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'profile' %}"><i class="bx bx-cog me-1"></i> Settings </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'profile' %}"><i class="bx bxs-comment-x"></i> Actions </a>
+                </li>
             </ul>
 
             <div class="card mb-4">
@@ -35,7 +38,7 @@
                                 <th>Next of Kin</th>
                                 <th>N.O.K Contact</th>
                                 <th>Med. Condition</th>
-                                <th>View Details</th>
+                                <th>Actions</th>
 
                             </tr>
                         </thead>
@@ -51,7 +54,10 @@
                                 <td>{{l.next_of_kin_phone}}</td>
                                 <td>{{l.medical_condition}}</td>
                                 <td>
-                                    <a href="{% url 'applicant_info' l.id %}" class="btn btn-primary me-2">View</a>
+                                    <a href="{% url 'applicant_info' l.id %}" class="btn btn-primary me-2">View Details</a>
+                                </td>
+                                <td>
+                                    <a href="{% url 'applicant_info' l.id %}" class="btn btn-primary me-2">Print ID</a>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -62,6 +68,6 @@
         </div>
     </div>
 </div>
-</div>
+
 <!-- / Content -->
 {% endblock content%}

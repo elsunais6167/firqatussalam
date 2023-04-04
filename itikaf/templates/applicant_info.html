@@ -17,7 +17,7 @@
                             <th>Approval</th>
                             <th>Checked-In</th>
                             <th>Checked-Out</th>
-                            <th>Comment</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody class="table-border-bottom-0">
@@ -25,13 +25,23 @@
                             <td>
                                 <form method="POST" action="{% url 'approved' applicant_info.pk %}">
                                     {% csrf_token %}
-                                    <input class="form-control" type="hidden" id="mosque_user" name="mosque_user" value=" " />
+                                    
                                     <input class="form-control" type="hidden" id="user" name="user"
                                         value="{{ applicant_id }}" />
-                                    
-                                    <input type="hidden" value="Approved" class="form-control" id="Approve" name="Approve" required />
+                                        <select id="approved" name="approved" class="select3 form-select" required>
+                                            <option value="Approved">Approved</option>
+                                            <option value="Disapproved">Disapproved</option>
+                                        </select>
+                                        
+                                        <select id="reason" name="reason" class="select3 form-select" style="display: none;">
+                                            <option value="">Reason for Disapproval</option>
+                                            <option value="Invalid ID">Invalid ID</option>
+                                            <option value="Wrong Information">Wrong Information</option>
+                                            <option value="History of Violence">History of Violence</option>
+                                            <option value="Indefinite Suspension">Indefinite Suspension</option>
+                                        </select>
                                     <div class="mt-2">
-                                        <button type="submit" class="btn btn-primary me-2">Approve</button>
+                                        <button type="submit" class="btn btn-primary me-2">Approve</button> 
                                     </div>
                                 </form>
                                 {% if latest_approved %}
@@ -83,11 +93,13 @@
                             <td>
                                 <form method="POST" action="{% url 'comment' applicant_info.pk %}">
                                     {% csrf_token %}
-                                    <input class="form-control" type="hidden" id="mosque_user" name="mosque_user" value=" " />
-                                    <input class="form-control" type="hidden" id="user" name="user"
-                                        value="{{ applicant_id }}" />
-                                    
-                                    <input class="form-control" type="text" id="comment" name="comment" required />
+                                    <select id="action" name="action" class="select3 form-select" required>
+                                        <option value="Suspension">Suspension</option>
+                                        <option value="Expulsion">Expulsion</option>
+                                    </select>
+                                    <div class="mt-2">
+                                    <textarea name="comment" id="comment" cols="50" rows="2" placeholder="What is the reason for your action" required></textarea>
+                                    </div>
                                     <div class="mt-2">
                                         <button type="submit" class="btn btn-primary me-2">Submit</button>
                                     </div>
@@ -106,7 +118,19 @@
                 </table>
             </div>
         </div>
-
+        <script>
+            const approvedSelect = document.getElementById('approved');
+            const reasonSelect = document.getElementById('reason');
+        
+            approvedSelect.addEventListener('change', () => {
+                if (approvedSelect.value === 'Disapproved') {
+                    reasonSelect.style.display = 'block';
+                } else {
+                    reasonSelect.style.display = 'none';
+                }
+            });
+        </script>
+        
         {% include 'info.html' %}
 
     </div>
