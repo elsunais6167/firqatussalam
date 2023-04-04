@@ -179,6 +179,7 @@ def mosque_dashboard(request):
     num_applicants_with_disapproval = Applicant.objects.filter(mosque=mosque, approval__isnull=False, approval__approved='Disapproved').distinct().count()
     num_applicants_with_checkin = Applicant.objects.filter(mosque=mosque, checkin__isnull=False).distinct().count()
     num_applicants_with_checkout = Applicant.objects.filter(mosque=mosque, checkout__isnull=False).distinct().count()
+    num_applicants_with_action = Applicant.objects.filter(mosque=mosque, comment__isnull=False).distinct().count()
     
     context = {
         'list_applicants': list_applicants,
@@ -188,6 +189,7 @@ def mosque_dashboard(request):
         'num_applicants_with_checkin': num_applicants_with_checkin,
         'num_applicants_with_checkout': num_applicants_with_checkout,
         'num_applicants_with_disapproval': num_applicants_with_disapproval,
+        'num_applicants_with_action': num_applicants_with_action,
     }
     return render(request, 'mosque_dashboard.html', context)
 
@@ -344,11 +346,12 @@ def checkin(request, pk):
 @login_required
 @user_passes_test(is_mosque_admin)
 def new_applicant(request):
-    #mosque_admin = get_object_or_404(MosqueAdmin, user=request.user)
-    #mosque_id = mosque_admin.mosque.id
-    #added_by = mosque_admin.id
+    mosque_admin = get_object_or_404(MosqueAdmin, user=request.user)
+    mosque = mosque_admin.mosque
 
     if request.method == 'POST':
+        mosque_admin = get_object_or_404(MosqueAdmin, user=request.user)
+        mosque = mosque_admin.mosque
         # Get the form data
         mosque_admin = get_object_or_404(MosqueAdmin, user=request.user)
         photo = request.FILES.get('passport')
@@ -389,9 +392,22 @@ def new_applicant(request):
         )
         details.save()
         return redirect('mosque_dashboard')
-
+    
+    list_applicants = Applicant.objects.filter(mosque=mosque)
+    total_applicants = list_applicants.count()
+    num_applicants_with_approval = Applicant.objects.filter(mosque=mosque, approval__isnull=False, approval__approved='Approved').distinct().count()
+    num_applicants_with_disapproval = Applicant.objects.filter(mosque=mosque, approval__isnull=False, approval__approved='Disapproved').distinct().count()
+    num_applicants_with_checkin = Applicant.objects.filter(mosque=mosque, checkin__isnull=False).distinct().count()
+    num_applicants_with_checkout = Applicant.objects.filter(mosque=mosque, checkout__isnull=False).distinct().count()
+    num_applicants_with_action = Applicant.objects.filter(mosque=mosque, comment__isnull=False).distinct().count()
+    
     context = {
-
+        'total_applicants': total_applicants,
+        'num_applicants_with_approval': num_applicants_with_approval,
+        'num_applicants_with_checkin': num_applicants_with_checkin,
+        'num_applicants_with_checkout': num_applicants_with_checkout,
+        'num_applicants_with_disapproval': num_applicants_with_disapproval,
+        'num_applicants_with_action': num_applicants_with_action,
     }
     return render(request, 'md_apply.html', context)
 
@@ -417,10 +433,91 @@ def profile(request):
         mosque.save()
         
         return redirect('profile')
+    
+    list_applicants = Applicant.objects.filter(mosque=mosque)
+    total_applicants = list_applicants.count()
+    num_applicants_with_approval = Applicant.objects.filter(mosque=mosque, approval__isnull=False, approval__approved='Approved').distinct().count()
+    num_applicants_with_disapproval = Applicant.objects.filter(mosque=mosque, approval__isnull=False, approval__approved='Disapproved').distinct().count()
+    num_applicants_with_checkin = Applicant.objects.filter(mosque=mosque, checkin__isnull=False).distinct().count()
+    num_applicants_with_checkout = Applicant.objects.filter(mosque=mosque, checkout__isnull=False).distinct().count()
+    num_applicants_with_action = Applicant.objects.filter(mosque=mosque, comment__isnull=False).distinct().count()
+    
     context = {
-        'profile': mosque
+        'profile': mosque,
+        'total_applicants': total_applicants,
+        'num_applicants_with_approval': num_applicants_with_approval,
+        'num_applicants_with_checkin': num_applicants_with_checkin,
+        'num_applicants_with_checkout': num_applicants_with_checkout,
+        'num_applicants_with_disapproval': num_applicants_with_disapproval,
+        'num_applicants_with_action': num_applicants_with_action,
     }
     return render(request, 'md_profile.html', context)
+
+@login_required
+@user_passes_test(is_mosque_admin)
+def action(request):
+    mosque_admin = get_object_or_404(MosqueAdmin, user=request.user)
+    mosque = mosque_admin.mosque
+
+    
+    applicant_with_actions = Applicant.objects.filter(comment__isnull=False)
+    actions = Comment.objects.all()
+    list_applicants = Applicant.objects.filter(mosque=mosque)
+    total_applicants = list_applicants.count()
+    num_applicants_with_approval = Applicant.objects.filter(mosque=mosque, approval__isnull=False, approval__approved='Approved').distinct().count()
+    num_applicants_with_disapproval = Applicant.objects.filter(mosque=mosque, approval__isnull=False, approval__approved='Disapproved').distinct().count()
+    num_applicants_with_checkin = Applicant.objects.filter(mosque=mosque, checkin__isnull=False).distinct().count()
+    num_applicants_with_checkout = Applicant.objects.filter(mosque=mosque, checkout__isnull=False).distinct().count()
+    num_applicants_with_action = Applicant.objects.filter(mosque=mosque, comment__isnull=False).distinct().count()
+    
+    context = {
+        'total_applicants': total_applicants,
+        'num_applicants_with_approval': num_applicants_with_approval,
+        'num_applicants_with_checkin': num_applicants_with_checkin,
+        'num_applicants_with_checkout': num_applicants_with_checkout,
+        'num_applicants_with_disapproval': num_applicants_with_disapproval,
+        'num_applicants_with_action': num_applicants_with_action,
+        'applicant_with_actions': applicant_with_actions,
+        'actions': actions,
+    }
+    return render(request, 'actions.html', context)
+
+@login_required
+@user_passes_test(is_mosque_admin)
+def action_info(request, pk):
+    applicant_info = Applicant.objects.get(id=pk)
+    applicant_id = applicant_info.id
+    
+    latest_comment = None
+    comments = Comment.objects.filter(participant=applicant_info)
+    if comments.exists():
+        latest_comment = comments.last()
+    
+    latest_check_out = None
+    check_out = CheckOut.objects.filter(participant=applicant_info)
+    if check_out.exists():
+        latest_check_out = check_out.last()
+
+    latest_check_in = None
+    check_in = CheckIn.objects.filter(participant=applicant_info)
+    if check_in.exists():
+        latest_check_in = check_in.last()
+    
+    latest_approved = None
+    approved = Approval.objects.filter(participant=applicant_info)
+    if approved.exists():
+        latest_approved = approved.last()
+    
+    context = {
+        'applicant_info': applicant_info,
+        'applicant_id': applicant_id,
+        'latest_comment': latest_comment.additional_info if latest_comment else None,
+        'latest_check_out': latest_check_out.check_out if latest_check_out else None,
+        'latest_check_in': latest_check_in.check_in if latest_check_in else None,
+        'latest_approved': latest_approved.approved if latest_approved else None,
+      
+    }
+    return render(request, 'action_info.html', context)
 
 
 

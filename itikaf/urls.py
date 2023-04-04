@@ -22,5 +22,7 @@ urlpatterns = [
     path('add_mosque/', views.add_mosque, name='add_mosque'),
     path('assign_admin/<str:pk>/', views.assign_admin, name='assign_admin' ),
     path('admin_list/', views.listUsers, name='admin_list'),
+    path('action/', views.action, name='action'),
+    path('action_info/<int:pk>/', views.action_info, name='action_info'),
     
 ]

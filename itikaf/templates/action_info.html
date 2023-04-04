@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Content wrapper -->
+<div class="content-wrapper">
+    <!-- Content -->
+
+
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Information/</span> {{ applicant_info }}</h4> <a
+            href="{% url 'mosque_dashboard' %}" class="btn btn-primary me-2">Go Back to Dashboard</a>
+        <div class="card mb-4">
+            <h5 class="card-header">Activities</h5>
+            <div class="table-responsive text-nowrap">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Approval</th>
+                            <th>Checked-In</th>
+                            <th>Checked-Out</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                        <tr>
+                            <td>
+                                {% if latest_approved %}
+                                <input type="text" class="form-control" value="{{ latest_approved }}" id="IdNum"
+                                    name="IdNum" readonly />
+                                {% endif %}
+                            </td>
+                            <td>
+
+                                {% if latest_check_in %}
+                                <input type="text" class="form-control" value="{{ latest_check_in }}" id="IdNum"
+                                    name="IdNum" readonly />
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if latest_check_out %}<div class="mt-2">
+                                    <input type="text" class="form-control" value="{{ latest_check_out }}" id="IdNum"
+                                        name="IdNum" readonly />
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                {% if latest_comment %}<div class="mt-2">
+                                    <input type="text" class="form-control" value="{{ latest_comment }}" id="IdNum"
+                                        name="IdNum" readonly />
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% include 'info.html' %}
+
+    </div>
+    <!-- / Content -->
+    {% endblock content%}
