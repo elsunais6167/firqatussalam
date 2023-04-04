@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>I'tikaf ID Card</title>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            width: 1012.5px;
+            height: 637.5px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 120px;
+            width: 100%;
+            background-color: #2f7dcc;
+            border-radius: 15px 15px 0 0;
+            color: #fff;
+            font-size: 36px;
+            font-weight: bold;
+            text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .card img {
+            width: 150px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 50%;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            border: 5px solid #2f7dcc;
+            margin-bottom: 20px;
+        }
+
+        .info {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            width: 80%;
+        }
+
+        .label {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2f7dcc;
+        }
+
+        .value {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #000000;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                Joint I'tikaf Committee, Katsina - ID Card: {{ applicant_info.id }}
+            </div>
+            <div class="card-img">
+                {% if applicant_info.photo %}
+                <img src="{{ applicant_info.photo.url }}" alt="passport" />
+                {% endif %}
+            </div>
+            <div class="info">
+                <div class="id-info">
+                    <div class="label">Mosque:</div>
+                    <div class="value">{{ applicant_info.mosque }}</div>
+                    <div class="label">Name:</div>
+                    <div class="value">{{ applicant_info.name }}</div>
+                    <div class="label">Age:</div>
+                    <div class="value">{{ applicant_info.age }}</div>
+                    <div class="label">Address:</div>
+                    <div class="value">{{ applicant_info.address }}</div>
+                </div>
+                <div class="contact-info">
+                    <div class="label">Phone Number:</div>
+                    <div class="value">(+234){{ applicant_info.phone }}</div>
+                    <div class="label">Next of Kin:</div>
+                    <div class="value">{{ applicant_info.next_of_kin_name }}</div>
+                    <div class="label">Next of Kin Phone Number:</div>
+                    <div class="value">(+234){{ applicant_info.next_of_kin_phone }}</div>
+                    <div class="label">Starting Date:</div>
+                    <div class="value">{{ applicant_info.start_date }}</div>
+                    <div class="label">Ending Date:</div>
+                    <div class="value">{{ applicant_info.end_date }}</div>
+                </div>
+            </div>
+        </div>
+        <button onclick="downloadIDCard()">Export as JPEG</button>
+    </div>
+    <script>
+        function downloadIDCard() {
+            var cardContainer = document.querySelector(".card");
+            var backgroundColor = window.getComputedStyle(cardContainer).backgroundColor;
+            html2canvas(cardContainer, { backgroundColor: backgroundColor }).then(function (canvas) {
+                var link = document.createElement("a");
+                document.body.appendChild(link);
+                link.download = "itikaf_id_card.jpg";
+                link.href = canvas.toDataURL("image/jpeg", 0.9);
+                link.click();
+                document.body.removeChild(link);
+            });
+        }
+    </script>
+
+</body>
+
+</html>

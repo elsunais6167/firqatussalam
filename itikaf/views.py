@@ -165,6 +165,14 @@ def printout(request):
     }
     return render(request, 'printout.html', context)
 
+def id_card(request, pk):
+    applicant_info = Applicant.objects.get(id=pk)
+    applicant_id = applicant_info.id
+    context = {
+        'applicant_id': applicant_id,
+        'applicant_info': applicant_info,
+    }
+    return render(request, 'id_card.html', context)
 
 #Mosque admin's Views
 @login_required
@@ -518,7 +526,6 @@ def action_info(request, pk):
       
     }
     return render(request, 'action_info.html', context)
-
 
 
 #State Admin's Views

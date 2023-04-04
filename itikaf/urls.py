@@ -24,5 +24,6 @@ urlpatterns = [
     path('admin_list/', views.listUsers, name='admin_list'),
     path('action/', views.action, name='action'),
     path('action_info/<int:pk>/', views.action_info, name='action_info'),
+    path('id_card/<int:pk>/', views.id_card, name='id_card'),
     
 ]
