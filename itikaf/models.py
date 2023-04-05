@@ -8,7 +8,7 @@ class Mosque(models.Model):
     phone = models.CharField(max_length=11)
     address = models.CharField(max_length=300)
     accepting_applications = models.BooleanField(default=True)
-    date_created = models.DateTimeField(auto_now_add=True, null=True)
+    date_added = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
         return f'{self.name} - {self.lga}'
@@ -16,13 +16,14 @@ class Mosque(models.Model):
 class MosqueAdmin(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     mosque = models.ForeignKey(Mosque, on_delete=models.CASCADE)
+    date_added = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
         return self.user.username
 
 class StateAdmin(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    
+    date_added = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
         return self.user.username
@@ -31,18 +32,21 @@ class Applicant(models.Model):
     name = models.CharField(max_length=100)
     age = models.CharField(max_length=2)
     address = models.CharField(max_length=300)
-    phone = models.CharField(max_length=20)
+    phone = models.CharField(max_length=20, unique=True)
     next_of_kin_name = models.CharField(max_length=100)
     next_of_kin_phone = models.CharField(max_length=20)
     medical_condition = models.TextField(blank=True)
     start_date = models.CharField(max_length=20)
     end_date = models.CharField(max_length=20)
     id_type = models.CharField(max_length=50)
-    id_card_no = models.CharField(max_length=20)
+    id_card_no = models.CharField(max_length=20, unique=True)
     id_image = models.ImageField(null=True, blank=True, upload_to="id_images/")
     photo = models.ImageField(null=True, blank=True, upload_to="profile_images/")
     added_by = models.ForeignKey(MosqueAdmin, on_delete=models.SET_NULL, null=True)
-
+    date_added = models.DateTimeField(auto_now_add=True, null=True)
+    class Meta:
+        unique_together = ('name', 'age', 'address', 'next_of_kin_phone')
+        
     def __str__(self):
         return f'{self.name} - {self.mosque}'
 
