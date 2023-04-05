@@ -136,40 +136,32 @@ def apply(request, pk):
     return render(request, 'apply.html', context)
 
 def application(request):
-    
-    photo = request.FILES.get('passport')
-    mosque_id = request.POST.get('mos')
-    name = request.POST.get('AName')
-    age = request.POST.get('age')
-    address = request.POST.get('address')
-    phone = request.POST.get('phoneNumber')
-    next_of_kin_name = request.POST.get('NName')
-    next_of_kin_phone = request.POST.get('NphoneNumber')
-    medical_condition = request.POST.get('mdcc')
-    start_date = request.POST.get('SDate')
-    end_date = request.POST.get('EDate')
-    request.method = 'POST'
-    id_type = request.POST['IdType']
-    id_card_no = request.POST.get('IdNum')
-    id_image = request.FILES.get('id-card')
-    
     if request.method =='POST':
-        photo = photo
-        mosque_id = mosque_id
-        name = name
-        age = age
-        address = address
-        phone = phone
-        next_of_kin_name = next_of_kin_name
-        next_of_kin_phone = next_of_kin_phone
-        medical_condition = medical_condition
-        start_date = start_date
-        end_date = end_date
-        id_type = id_type
-        id_card_no = id_card_no
-        id_image = id_image
+        photo = request.FILES.get('passport')
+        mosque_id = request.POST.get('mos')
+        name = request.POST.get('AName')
+        age = request.POST.get('age')
+        address = request.POST.get('address')
+        phone = request.POST.get('phoneNumber')
+        next_of_kin_name = request.POST.get('NName')
+        next_of_kin_phone = request.POST.get('NphoneNumber')
+        medical_condition = request.POST.get('mdcc')
+        start_date = request.POST.get('SDate')
+        end_date = request.POST.get('EDate')
+        request.method = 'POST'
+        id_type = request.POST['IdType']
+        id_card_no = request.POST.get('IdNum')
+        id_image = request.FILES.get('id-card')
         
+        
+        if Applicant.objects.filter(phone=phone, id_card_no=id_card_no).exists():
+            error_message = "Sorry you have already applied!"
 
+            context = {
+                'error_message': error_message,
+            }
+            return render(request, 'app_error.html', context)
+        
         details = Applicant(
             photo = photo,
             mosque_id = mosque_id,
@@ -190,7 +182,7 @@ def application(request):
         details.save()
         request.session['applicant_id'] = details.id
         return redirect('printout')
-
+    
     return render(request, 'home.html')
 
 def printout(request):

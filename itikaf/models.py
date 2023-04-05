@@ -44,8 +44,6 @@ class Applicant(models.Model):
     photo = models.ImageField(null=True, blank=True, upload_to="profile_images/")
     added_by = models.ForeignKey(MosqueAdmin, on_delete=models.SET_NULL, null=True)
     date_added = models.DateTimeField(auto_now_add=True, null=True)
-    class Meta:
-        unique_together = ('name', 'age', 'address', 'next_of_kin_phone')
         
     def __str__(self):
         return f'{self.name} - {self.mosque}'

@@ -1,8 +1,10 @@
 from django.urls import path
 from . import views
+from landing import views as landing_views
 
 urlpatterns = [
-    path('', views.home, name='home'),
+    path('', landing_views.landing, name='home'),
+    #path('<str:error_message>/', landing_views.landing, name='home_with_error'),
     path('logout/', views.loggingout, name='logout'),
     path('applyi/<str:pk>/', views.apply, name='applyi'),
     path('form', views.application, name='form'),

@@ -3,7 +3,7 @@ from django.urls import reverse
 
 
 # Create your views here.
-def landing(request):
+def landing(request, error_message=None):
 
     context = {
 
