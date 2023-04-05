@@ -10,7 +10,3 @@ def landing(request):
     }
 
     return render(request, 'index.html', context)
-
-
-def my_view(request):
-    url = reverse('itikaf:login')

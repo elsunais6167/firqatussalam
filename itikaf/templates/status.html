@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div id="alert-div" class="alert alert-danger alert-dismissible" role="alert" {% if error_message %} style="display: block;" {% else %} style="display: none;" {% endif %}>
+    <p>{{ error_message }} <strong> {{ searched }} </strong>
+    </p>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% include 'info.html' %}
+
+{% endblock content %}

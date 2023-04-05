@@ -1,6 +1,54 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="modal fade" id="exLargeModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel4">KA'IDOJIN SHIGA ITTIKAF</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>
+          1. Wajibi ne ga masuyin ittikafi su chika form tare da hoto da kuma katin dan-kasa ko katin zabe.
+        </p>
+        <p>
+          2. Wajibi ne ga masuyin ittikafi suyi guzurin abubuwan bukatarsu da kuma mai kawo masu abinchi
+          (Ga Mata, Ba'a yarda namiji ya rinka kawo maki abinchi saida karamin yaro ).
+        </p>
+        <p>
+          3. Babu chin abinchi a cikin masallaci sai bisa leda
+        </p>
+        <p>
+          4. Ba'a fitowa dada cikin masallaci saida wata lalura ko bukata ta musamman
+        </p>
+        <p>
+          5. Ba'a firar duniya ga masu ittikafi ko zaman fira ga masu kawo abinchi.
+        </p>
+        <p>
+          6. Babu shan taba da sauransu a harabar masallaci ko kewaye kuma kada mata su shagala
+          da kitso da kunshi a cikin masallaci.
+        </p>
+        <p>
+          7. Babu dora kaya a wurin da ake aje takalma, ko kuma yin amfani candle a masallaci.
+        </p>
+
+        <p>
+          8. Ba'a yarda a rika amfani da waya (Handset) ba a lokacin ittikafi. Idan kuma yazama
+          lalura, to a sanyata a matakin (Silent) ko (Vibration)
+        </p>
+        <p>
+          9. Za'ayi biyayya ga umarnin Agaji dana Hisbah da sauran Jami'an tsaro
+        </p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- Content wrapper -->
 <div class="content-wrapper">
@@ -17,7 +65,13 @@
     <!-- Toast with Placements -->
     <!-- Basic Bootstrap Table -->
     <div class="card">
-      <h5 class="card-header">List of Masjid</h5>
+      <h5 class="card-header">List of Masjid in {{ searched }}</h5>
+      <div id="alert-div" class="alert alert-danger alert-dismissible" role="alert" {% if error_message %}
+        style="display: block;" {% else %} style="display: none;" {% endif %}>
+        <p>{{ error_message }} <strong> {{ searched }} </strong>
+        </p>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
       <div class="table-responsive text-nowrap">
         <table class="table">
           <thead>
@@ -55,5 +109,12 @@
   </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function () {
+    // Select the modal element by its id and display it
+    $('#exLargeModal').modal('show');
+  });
+</script>
 
 {% endblock content %}

@@ -73,6 +73,50 @@ def user_signup(request):
 
 
 # Non Auth Views for Applicant
+def search_mosques(request):
+    if request.method == "POST":
+        searched = request.POST.get('searched')
+        mosques = Mosque.objects.filter(lga__contains=searched)
+        
+        if mosques.exists():
+            context = {
+                'searched': searched,
+                'mosques': mosques,
+            }
+            return render(request, 'home.html', context)
+        else:
+            error_message = 'No mosques found in '
+            return render(request, 'home.html', {'error_message': error_message, 'searched': searched })
+   
+def search_status(request):
+    if request.method == "POST":
+        searched = request.POST.get('searched')
+        applicant_info = Applicant.objects.filter(id__contains=searched)
+        
+        if applicant_info.exists():
+            approval_info = Approval.objects.filter(participant_id=applicant_info.first())
+            status = "Application is under review, please check back later"
+            comment = ""  # Define comment with a default value
+            if approval_info.exists():
+                if approval_info.first().approved == "Approved":
+                    status = "Approved"
+                else:
+                    status = "Disapproved"
+                    comment = approval_info.first().reason
+
+            context = {
+                'comment': comment,
+                'searched': searched,
+                'status': status,
+                'applicant_info': applicant_info.first(),
+            }
+            return render(request, 'status.html', context)
+        else:
+            error_message = 'No applicant found with ID '
+            return render(request, 'status.html', {'error_message': error_message, 'searched': searched })
+
+
+        
 def home(request):
     mosques = Mosque.objects.all()
     context = {
