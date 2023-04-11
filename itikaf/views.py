@@ -11,8 +11,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
 import re
+from django.views.generic import TemplateView
 
 # Users and Auth Views
+handler404 = TemplateView.as_view(template_name="404.html")
+
 def is_state_admin(user):
     return hasattr(user, 'stateadmin')
 
